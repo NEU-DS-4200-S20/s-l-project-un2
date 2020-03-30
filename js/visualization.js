@@ -1,7 +1,6 @@
-// Immediately Invoked Function Expression to limit access to our 
-// variables and prevent 
 ((() => {
-
-  console.log("Hello, world!");
-
+  // Load the data from a CSV file
+  d3.csv("/data/country-programme-results-2019.csv", (data) => {
+    console.log(data);
+  });
 })());
