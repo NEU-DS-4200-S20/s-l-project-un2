@@ -8,7 +8,7 @@
     .unitId('name'); // column that identifies each country (must match the property name in countries.json)  
 
   // Import data
-  d3.csv('/data/country-programme-results-2019.csv').then(data => {
+  d3.csv('data/country-programme-results-2019.csv').then(data => {
     // TODO: make this based on dropdown value
     const category = 'Sexual reproductive health';
 
