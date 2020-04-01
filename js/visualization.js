@@ -10,7 +10,7 @@
   // Import data
   d3.csv('/data/country-programme-results-2019.csv').then(data => {
     // TODO: make this based on dropdown value
-    const category = 'OEE';
+    const category = 'Sexual reproductive health';
 
     categoryData = getCountForCategory(data, category);
     map.draw(d3.select('#map').datum(categoryData));
