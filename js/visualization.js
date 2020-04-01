@@ -1,9 +1,4 @@
 ((() => {
-  var format = function (d) {
-    d = d / 1000000;
-    return d3.format(',.02f')(d) + 'M';
-  }
-
   // Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
   var map = d3.choropleth()
     .geofile('lib/d3-geomap/topojson/world/countries.json')
@@ -15,14 +10,14 @@
   // Import data
   d3.csv('/data/country-programme-results-2019.csv').then(data => {
     // TODO: make this based on dropdown value
-    const category = 'Sexual reproductive health';
+    const category = 'OEE';
 
     categoryData = getCountForCategory(data, category);
     map.draw(d3.select('#map').datum(categoryData));
   });
 
   function getCountForCategory(data, category) {
-    let entriesForCategory = data.filter(entry => entry['Thematic Area Category'] == category);
+    let entriesForCategory = data.filter(entry => entry['Thematic Area Category'].toLowerCase() == category.toLowerCase());
 
     // Array of objects that look like this:
     // {name: "Bangladesh", Thematic Area Category: "Sexual reproductive health", Category Count: 13}
