@@ -3,7 +3,7 @@
   <!-- Metadata -->
   <head>
     <meta charset="utf-8" />
-
+    
     <!-- Title -->
     <title>UN2: UNFPA Global Learning Map, DS 4200 S20</title>
 
@@ -48,7 +48,7 @@
 
     <!-- Your writeup goes here -->
     <div class="content-column">
-      <h1>Project Team #: Topic, DS 4200 S20</h1>
+      <h1>UN2: UNFPA Global Learning Map, DS 4200 S20</h1>
 
       <p>
         <strong>Student One</strong>, <strong>Student Two</strong>,
@@ -91,11 +91,33 @@
     </div>
 
     <!-- Your visualization here -->
+    
     <div class="vis-holder">
+      
       <!-- Change viewbox to whatever you want, e.g. "0 0 1000 6000" This determines your aspect ratio and coordinate system -->
       <!-- Delete all the sample SVG code below after the viewbox to before the closing tag. Populate this part of the SVG with D3. -->
       <div class="d3-geomap" id="map"></div>
+      <div class="d3-dropdown2" id="dropdown2"></div>
+
+      <!--Dropdown menus-->
+      <select id="dropdown1">
+        <option value="Sexual reproductive health">Sexual reproductive health</option>
+        <option value="GBV">GBV</option>
+        <option value="Youth">Youth</option>
+        <option value="OEE">OEE</option>
+        <option value="Population Data">Population Data</option>
+      </select>
+
+      <p id="selected-dropdown1"></p>
+
+      <!--<select id="dropdown2">
+        <option value="Afghanistan">Afghanistan</option>
+        <option value="Bangladesh">Bangladesh</option> 
+      </select>-->
+
     </div>
+    
+
 
     <!-- Your writeup goes here -->
     <div class="content-column">

@@ -5,16 +5,17 @@
     .colors(d3.schemeYlGnBu[9])
     .column('Category Count') // column to represent on heatmap
     .format(d => d)
-    .unitId('name'); // column that identifies each country (must match the property name in countries.json)  
+    .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
   // Import data
   d3.csv('/data/country-programme-results-2019.csv').then(data => {
     // TODO: make this based on dropdown value
-    const category = 'Sexual reproductive health';
+    const category = "Youth";
 
     categoryData = getCountForCategory(data, category);
     map.draw(d3.select('#map').datum(categoryData));
   });
+
 
   function getCountForCategory(data, category) {
     let entriesForCategory = data.filter(entry => entry['Thematic Area Category'].toLowerCase() == category.toLowerCase());
@@ -39,3 +40,5 @@
     return countryCategoryCount;
   }
 })());
+
+
