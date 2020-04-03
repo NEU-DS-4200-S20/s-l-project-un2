@@ -38,7 +38,23 @@
     }, []);
 
     return countryCategoryCount;
-  }
+  } 
+  
+  d3.csv('/data/countries.csv').then(countries => {
+     d3.select("#dropdown2")
+    .selectAll("option")
+    .data(countries)
+    .enter()
+    .append("option")
+    
+    .attr("value", function(row) {
+      return row.Country; })
+    .text(function(row) { return row.Country; });
+  })
+  
+
+
+  $('#dropdown2').select2();
 })());
 
 
