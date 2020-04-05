@@ -14,7 +14,7 @@
   // Import data
   d3.csv('/data/country-programme-results-2019.csv').then(data => {
     let countries = getDistinctValuesForField(data, 'Country');
-    populateDropdown(countryDropdown, countries);
+    populateDropdown(countryDropdown, countries.sort());
 
     // TODO: make this based on dropdown value
     const category = "Youth";
