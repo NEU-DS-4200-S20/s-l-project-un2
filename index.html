@@ -3,7 +3,7 @@
   <!-- Metadata -->
   <head>
     <meta charset="utf-8" />
-    
+
     <!-- Title -->
     <title>UN2: UNFPA Global Learning Map, DS 4200 S20</title>
 
@@ -91,16 +91,14 @@
     </div>
 
     <!-- Your visualization here -->
-    
+
     <div class="vis-holder">
-      
       <!-- Change viewbox to whatever you want, e.g. "0 0 1000 6000" This determines your aspect ratio and coordinate system -->
       <!-- Delete all the sample SVG code below after the viewbox to before the closing tag. Populate this part of the SVG with D3. -->
       <div class="d3-geomap" id="map"></div>
-     
 
       <!--Dropdown menus-->
-      <select id="dropdown1">
+      <select id="category-dropdown">
         <option value="SRH">Sexual reproductive health</option>
         <option value="GBV">GBV</option>
         <option value="Youth">Youth</option>
@@ -108,19 +106,8 @@
         <option value="Population Data">Population Data</option>
       </select>
 
-      <p id="selected-dropdown1"></p>
-
-      <select id="dropdown2">
-      </select>
-
-      <!--<select id="dropdown2">
-        <option value="Afghanistan">Afghanistan</option>
-        <option value="Bangladesh">Bangladesh</option> 
-      </select>-->
-
+      <select id="country-dropdown"> </select>
     </div>
-    
-
 
     <!-- Your writeup goes here -->
     <div class="content-column">
@@ -237,7 +224,11 @@
     <script src="//unpkg.com/d3@5/dist/d3.min.js"></script>
     <script src="//unpkg.com/topojson@3/dist/topojson.min.js"></script>
     <script src="lib/d3-geomap/d3-geomap.min.js"></script>
-    <script   src="https://code.jquery.com/jquery-3.4.1.slim.min.js"   integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="   crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.min.js"></script>
     <script src="js/visualization.js"></script>
   </body>
