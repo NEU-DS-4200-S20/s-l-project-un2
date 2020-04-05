@@ -1,10 +1,15 @@
 ((() => {
   let countries;
   const countryDropdown = document.querySelector('#country-dropdown');
-
+  const categoryDropdown = document.querySelector('#category-dropdown');
+  categoryDropdown.addEventListener("change", function() { dispatch.call("change-category") } )
+  let dispatch = d3.dispatch("change-category")
+  dispatch.on("change-category", drawMap)
+ 
 
   // Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
-  var map = d3.choropleth()
+function drawMap() {
+  let map = d3.choropleth()
     .geofile('lib/d3-geomap/topojson/world/countries.json')
     .colors(d3.schemeYlGnBu[9])
     .column('Category Count') // column to represent on heatmap
@@ -16,11 +21,16 @@
     let countries = getDistinctValuesForField(data, 'Country');
     populateDropdown(countryDropdown, countries.sort());
 
-    // TODO: make this based on dropdown value
-    const category = "Youth";
+    let category = categoryDropdown[categoryDropdown.selectedIndex].text;
     const categoryData = getCountForCategory(data, category);
-    map.draw(d3.select('#map').datum(categoryData));
+    mapholder = d3.select("#mapholder")
+    d3.select('#map').remove()
+    mapholder.append("div").attr("id", "map")
+    
+    map.draw(d3.select("#map").datum(categoryData));
   });
+}
+drawMap()
 
 
 })());
@@ -57,7 +67,7 @@ function getCountForCategory(data, category) {
   // Array of objects that look like this:
   // {name: "Bangladesh", Thematic Area Category: "Sexual reproductive health", Category Count: 13}
   let countryCategoryCount = entriesForCategory.reduce((result, entry) => {
-    const country = entry['Country'];
+    let country = entry['Country'];
 
     // Add to count if country has aleady been seen
     for (let i = 0; i < result.length; i++) {
