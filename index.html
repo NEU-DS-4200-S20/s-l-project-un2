@@ -83,29 +83,26 @@
       
       <!-- Change viewbox to whatever you want, e.g. "0 0 1000 6000" This determines your aspect ratio and coordinate system -->
       <!-- Delete all the sample SVG code below after the viewbox to before the closing tag. Populate this part of the SVG with D3. -->
-      <div class="d3-geomap" id="map"></div>
-     
+      
+      <div class="d3-geomap vis__left-panel" id="mapholder">
+        <div id="map"></div>
+      </div>
 
-      <!--Dropdown menus-->
-      <select id="dropdown1">
-        <option value="SRH">Sexual reproductive health</option>
-        <option value="GBV">GBV</option>
-        <option value="Youth">Youth</option>
-        <option value="OEE">OEE</option>
-        <option value="Population Data">Population Data</option>
-      </select>
+      <div class="vis__right-panel">
+        <!--Dropdown menus-->
+        <select id="category-dropdown" class="vis__dropdown">
+          <option value="">Select a category</option>
+          <option value="SRH">Sexual reproductive health</option>
+          <option value="GBV">GBV</option>
+          <option value="Youth">Youth</option>
+          <option value="OEE">OEE</option>
+          <option value="Population Data">Population Data</option>
+        </select>
 
-      <p id="selected-dropdown1"></p>
-
-      <select id="dropdown2">
-      </select>
-
-      <!--<select id="dropdown2">
-        <option value="Afghanistan">Afghanistan</option>
-        <option value="Bangladesh">Bangladesh</option> 
-      </select>-->
-
-    </div>
+        <select id="country-dropdown" class="vis__dropdown">
+          <option value="">Select a country</option>
+        </select>
+      </div>
     
 
 
