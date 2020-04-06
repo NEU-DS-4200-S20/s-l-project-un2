@@ -1,7 +1,7 @@
 ((() => {
   // Import data
   let dataset;
-  d3.csv('/data/country-programme-results-2019.csv').then(data => {
+  d3.csv('data/country-programme-results-2019.csv').then(data => {
     dataset = data
 
     // Populate Country dropdown
