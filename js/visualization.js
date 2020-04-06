@@ -1,14 +1,17 @@
 ((() => {
-  let countries;
-  const countryDropdown = document.querySelector('#country-dropdown');
-  const categoryDropdown = document.querySelector('#category-dropdown');
-  categoryDropdown.addEventListener("change", function() { dispatch.call("change-category") } )
-  let dispatch = d3.dispatch("change-category")
-  dispatch.on("change-category", drawMap)
- 
+  // Import data
+  let dataset;
+  d3.csv('/data/country-programme-results-2019.csv').then(data => {
+    dataset = data
+
+    // Populate Country dropdown
+    const countries = getDistinctValuesForField(dataset, 'Country');
+    populateDropdown(countryDropdown, countries.sort());
+
+    drawMap();
+  });
 
   // Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
-function drawMap() {
   let map = d3.choropleth()
     .geofile('lib/d3-geomap/topojson/world/countries.json')
     .colors(d3.schemeYlGnBu[9])
@@ -16,25 +19,35 @@ function drawMap() {
     .format(d => d)
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
-  // Import data
-  d3.csv('/data/country-programme-results-2019.csv').then(data => {
-    let countries = getDistinctValuesForField(data, 'Country');
-    populateDropdown(countryDropdown, countries.sort());
+  // Link dropdowns to map
+  const countryDropdown = document.querySelector('#country-dropdown');
+  const categoryDropdown = document.querySelector('#category-dropdown');
+  let dispatch = d3.dispatch("change-category");
+  categoryDropdown.addEventListener("change", () => { dispatch.call("change-category") });
+  dispatch.on("change-category", drawMap);
 
-    let category = categoryDropdown[categoryDropdown.selectedIndex].text;
-    const categoryData = getCountForCategory(data, category);
-    mapholder = d3.select("#mapholder")
-    d3.select('#map').remove()
-    mapholder.append("div").attr("id", "map")
-    
-    map.draw(d3.select("#map").datum(categoryData));
-  });
-}
-drawMap()
+  // Draws map 
+  function drawMap() {
+    if (dataset) {
+      const category = categoryDropdown[categoryDropdown.selectedIndex].text;
+      const categoryData = getDataForCategory(dataset, category);
 
+      // Draw map
+      let mapholder = d3.select("#mapholder");
+      d3.select('#map').remove();
+      mapholder.append("div").attr("id", "map");
 
+      map.draw(d3.select("#map").datum(categoryData));
+    }
+  }
 })());
 
+/**
+ * Populates given dropdown with given option values.
+ * 
+ * @param {HTMLElement} dropdown HTML dropdown element
+ * @param {array}       options  Values to populate dropdown options with
+ */
 function populateDropdown(dropdown, options) {
   options.forEach(option => {
     let el = document.createElement("option");
@@ -45,6 +58,14 @@ function populateDropdown(dropdown, options) {
   })
 }
 
+/**
+ * Gets the unique values for the given field of the given dataset.
+ * 
+ * @param {array}  data  Dataset
+ * @param {string} field Data field (column) name
+ * 
+ * @returns {array} 
+ */
 function getDistinctValuesForField(data, field) {
   let distinctValues = {};
 
@@ -61,7 +82,15 @@ function getDistinctValuesForField(data, field) {
   return Object.keys(distinctValues);
 }
 
-function getCountForCategory(data, category) {
+/**
+ * Constructs data to use for a heatmap of the given category.
+ * 
+ * @param {array}  data     Dataset
+ * @param {string} category Thematic area category name
+ * 
+ * @returns {array}
+ */
+function getDataForCategory(data, category) {
   let entriesForCategory = data.filter(entry => entry['Thematic Area Category'].toLowerCase() == category.toLowerCase());
 
   // Array of objects that look like this:
