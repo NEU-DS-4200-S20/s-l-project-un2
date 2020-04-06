@@ -33,10 +33,7 @@
       const categoryData = getDataForCategory(dataset, category);
 
       // Draw map
-      let mapholder = d3.select("#mapholder");
-      d3.select('#map').remove();
-      mapholder.append("div").attr("id", "map");
-
+      d3.select('#map').select('svg').remove();
       map.draw(d3.select("#map").datum(categoryData));
     }
   }

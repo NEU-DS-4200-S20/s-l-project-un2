@@ -94,12 +94,13 @@
 
     <div class="vis-holder">
       <!-- Change viewbox to whatever you want, e.g. "0 0 1000 6000" This determines your aspect ratio and coordinate system -->
-      <div class="d3-geomap vis__left-panel" id="mapholder">
+      <div class="d3-geomap vis__left-panel">
         <div id="map"></div>
       </div>
 
       <div class="vis__right-panel">
         <!--Dropdown menus-->
+        <label for="category-dropdown">Category</label>
         <select id="category-dropdown" class="vis__dropdown">
           <option value="">Select a category</option>
           <option value="SRH">Sexual reproductive health</option>
@@ -108,6 +109,8 @@
           <option value="OEE">OEE</option>
           <option value="Population Data">Population Data</option>
         </select>
+
+        <label for="country-dropdown">Country</label>
         <select id="country-dropdown" class="vis__dropdown">
           <option value="">Select a country</option>
         </select>
