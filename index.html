@@ -3,7 +3,7 @@
   <!-- Metadata -->
   <head>
     <meta charset="utf-8" />
-
+    
     <!-- Title -->
     <title>UN2: UNFPA Global Learning Map, DS 4200 S20</title>
 
@@ -51,8 +51,8 @@
       <h1>UN2: UNFPA Global Learning Map, DS 4200 S20</h1>
 
       <p>
-        <strong>Student One</strong>, <strong>Student Two</strong>,
-        <strong>Student Three</strong>
+        <strong>Caitlin Wang</strong>, <strong>Drefnie R. Limprevil</strong>,
+        <strong>Emily Colladay</strong>, <strong>Garret Kutzko</strong>
       </p>
 
       <p>
@@ -71,48 +71,43 @@
 
       <h1>Motivation</h1>
 
-      <p><em>Summary of user needs and motivating questions.</em></p>
-
-      <p>
-        <em
-          >Expectation: There is a clear focus, and a developed explanation of
-          the problem, and a reasonable response is proposed.</em
-        >
-      </p>
+      <p><em>For our project, we chose to create a learning map that educates users on 2019 UNFPA initiatives in each member country. We chose to focus on an interactive map visualization that allowed a user to explore initiatives by filtering the map by category and/or country. For our data, we needed a way to efectively show our mostly qualitative data in an interesting and engaging way. We also wanted to present a map that provided an overview of the progress made on UNFPA goals, while encouraging the user to explore details on different countries' initiatives. We aimed to reach this goal of exploration and learning in a format that was easy to understand and would be compelling to a wide range of users.</em></p>
 
       <h1>Visualization</h1>
 
-      <p>
-        <em
-          >Include the interactive visualization as part of this page. Static
-          example follows.</em
-        >
-      </p>
     </div>
 
     <!-- Your visualization here -->
-
+    
     <div class="vis-holder">
+      
       <!-- Change viewbox to whatever you want, e.g. "0 0 1000 6000" This determines your aspect ratio and coordinate system -->
       <!-- Delete all the sample SVG code below after the viewbox to before the closing tag. Populate this part of the SVG with D3. -->
-      <div class="d3-geomap vis__left-panel" id="map"></div>
+      <div class="d3-geomap" id="map"></div>
+     
 
-      <div class="vis__right-panel">
-        <!--Dropdown menus-->
-        <select id="category-dropdown" class="vis__dropdown">
-          <option value="">Select a category</option>
-          <option value="SRH">Sexual reproductive health</option>
-          <option value="GBV">GBV</option>
-          <option value="Youth">Youth</option>
-          <option value="OEE">OEE</option>
-          <option value="Population Data">Population Data</option>
-        </select>
+      <!--Dropdown menus-->
+      <select id="dropdown1">
+        <option value="SRH">Sexual reproductive health</option>
+        <option value="GBV">GBV</option>
+        <option value="Youth">Youth</option>
+        <option value="OEE">OEE</option>
+        <option value="Population Data">Population Data</option>
+      </select>
 
-        <select id="country-dropdown" class="vis__dropdown">
-          <option value="">Select a country</option>
-        </select>
-      </div>
+      <p id="selected-dropdown1"></p>
+
+      <select id="dropdown2">
+      </select>
+
+      <!--<select id="dropdown2">
+        <option value="Afghanistan">Afghanistan</option>
+        <option value="Bangladesh">Bangladesh</option> 
+      </select>-->
+
     </div>
+    
+
 
     <!-- Your writeup goes here -->
     <div class="content-column">
@@ -151,26 +146,18 @@
       </p>
 
       <h1>Data Analysis</h1>
-      <p><em>Summary of data, data types, and data preprocessing.</em></p>
-
-      <p>
-        <em
-          >Expectation: Data sources match the problem statement and are
-          appropriate. These descriptions should be very explicit so someone
-          could read your page and properly reproduce your results.</em
-        >
-      </p>
+      <p><em>The data used in our visualization was collected from the various country offices of UNFPA and records advancements the offices have made in regards to the specific UNFPA strategic plan (SP) goals.The data has been put together in its current form by UNFPA’s data specialist, who determined which advancement falls into which SP goal best. The data is exclusively categorical and mostly non-numerical. To convert our data into a workable format we focused on the variables that involved the UNFPA member countries, initiative categories, or "Thematic Area Categories", and created a new variable that provided a count of the initiatives that fit under each category.</em><p>
 
       <h1>Task Analysis</h1>
 
-      <p><em>Summary of task table.</em></p>
+      <p><em>Our first and most crucial domain task was for the user to be able to view UNFPA initiatives by category. This task has the low-level task of identifying and comparing, the mid-level task of locating, and the high level task of consuming, or discovering. We do this by allowing our user to filter the map by choosing a category from the dropdown, giving them the option to select a country of interest on the map, and provding details to the intiatives for the country they have selected.</em></p>
+      
+      <p><em>Similar to our first domain task, our second is to view initiatives by country. This task has the same low level and high level task as our first domain task, but has the mid-level task of browsing. The visualization achieves this by letting the user choose a country from the dropdown and see an overview of all of the UNFPA initiatives they have implemented in 2019.</em></p>
 
-      <p>
-        <em
-          >Expectation: Clearly describes domain tasks, processes, goals and
-          abstract tasks for domain problems.</em
-        >
-      </p>
+      <p><em>Our third domain task is for our user to see the details of each country's initiatives, which allows the user to identify, locate, and consume our visulization, or see presented data. After the user chooses and selects a country of interest, the table that appears presents details for the reader to learn more about a certain country's initiatives.</em></p>
+
+      <p><em>Our final domain task is to provide further information on a specific UN initiative, which allows a user to identify, browse, and consume presented data in the visualization. After the reader has looked at the table with details on a country's initiatives, they will be provided with links to the UNFPA website to learn more about the organization's related resources on a particular intiative or initiative category.</em></p>
+
 
       <h1>Design Process</h1>
 
@@ -229,11 +216,7 @@
     <script src="//unpkg.com/d3@5/dist/d3.min.js"></script>
     <script src="//unpkg.com/topojson@3/dist/topojson.min.js"></script>
     <script src="lib/d3-geomap/d3-geomap.min.js"></script>
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-      integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
-      crossorigin="anonymous"
-    ></script>
+    <script   src="https://code.jquery.com/jquery-3.4.1.slim.min.js"   integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="   crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.min.js"></script>
     <script src="js/visualization.js"></script>
   </body>
