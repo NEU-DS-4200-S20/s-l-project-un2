@@ -15,7 +15,7 @@
   let map = d3.choropleth()
     .geofile('lib/d3-geomap/topojson/world/countries.json')
     .colors(d3.schemeYlGnBu[9])
-    .column('Category Count') // column to represent on heatmap
+    .column('Initiative Count') // column to represent on heatmap
     .format(d => d)
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
@@ -98,14 +98,29 @@ function getDataForCategory(data, category) {
     // Add to count if country has aleady been seen
     for (let i = 0; i < result.length; i++) {
       if (result[i]['name'] == country) {
-        result[i]['Category Count'] += 1;
+        result[i]['Initiative Count'] += 1;
         return result;
       }
     }
     // Push new object to array if country hasn't been seen yet
-    result.push({ 'name': country, 'Thematic Area Category': category, 'Category Count': 1 });
+    result.push({ 'name': country, 'Thematic Area Category': category, 'Initiative Count': 1 });
     return result;
   }, []);
 
   return countryCategoryCount;
 }
+
+// Modal 
+
+var modal = document.getElementById('myModal');
+var svg = $("#mysvg");
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+svg.on("click", function(d){
+  $("#myModal").show();
+});
