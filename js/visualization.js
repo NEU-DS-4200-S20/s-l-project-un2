@@ -110,10 +110,10 @@ function getDataForCategory(data, category) {
   return countryCategoryCount;
 }
 
-// Modal 
+// Modal creation
 
 var modal = document.getElementById('myModal');
-var svg = $("#mysvg");
+var svg = $("#country-dropdown");
 
 window.onclick = function(event) {
     if (event.target == modal) {
