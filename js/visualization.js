@@ -34,6 +34,9 @@
     populateDropdown(categoryDropdown, categories.sort(), (cat) => categoryNames[cat] || cat);
 
     drawMap();
+
+    // Create table
+    table("#table", dataset);
   });
 
   // Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
@@ -47,6 +50,7 @@
   let dispatch = d3.dispatch("change-category");
   categoryDropdown.addEventListener("change", () => { dispatch.call("change-category") });
   dispatch.on("change-category", drawMap);
+
 
   // Draws map 
   function drawMap() {
@@ -133,4 +137,57 @@ function getDataForCategory(data, category) {
   }, []);
 
   return countryCategoryCount;
+}
+
+// Creates table
+function table(selector, data) {
+  let ourBrush = null,
+    selectableElements = d3.select(null),
+    dispatcher;
+
+  function chart(selector, data) {
+    let table = d3.select(selector)
+      .append("table")
+      .classed("my-table", true)
+
+    // Filters the dataset to only get certain columns
+    let tableHeaders = ["Country", "Thematic Area", "Thematic Area Category"];
+
+    let header = table
+      .append("thead")
+      .append("tr")
+      .selectAll("th")
+      .data(tableHeaders)
+      .enter()
+      .append("th")
+      .text(d => { return d; })
+
+    let rows = table
+      .append("tbody")
+      .selectAll("tr")
+      .data(data)
+      .enter()
+      .append("tr")
+      .on("mouseover", function (d) {
+        d3.select(this)
+          .style("background-color", "#bcc0c0");
+      })
+      .on("mouseout", function (d) {
+        d3.select(this)
+          .style("background-color", "transparent");
+      });
+
+    let cells = rows
+      .selectAll("td")
+      .data(row => {
+        return tableHeaders.map((d, i) => {
+          return { i: d, value: row[d] };
+        });
+      })
+      .enter()
+      .append("td")
+      .html(d => { return d.value; });
+  };
+
+  return chart(selector, data);
 }
