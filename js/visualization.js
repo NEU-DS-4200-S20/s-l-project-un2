@@ -1,6 +1,27 @@
 ((() => {
+  const categoryNames = {
+    "Sexual reproductive health": "Sexual Reproductive Health",
+    "GBV": "Gender-based Violence",
+    "Youth": "Youth",
+    "OEE": "Organizational Effectiveness and Efficiency",
+    "Population data": "Population Data",
+    "Harmful practices": "Harmful Practices"
+  }
+
+  const categoryColors = {
+    "Sexual reproductive health": d3.schemeBlues[9],
+    "GBV": d3.schemeGreens[9],
+    "Youth": d3.schemeOranges[9],
+    "OEE": d3.schemePurples[9],
+    "Population data": d3.schemeReds[9],
+    "Harmful practices": d3.schemeBuGn[9]
+  }
+
   // Import data
   let dataset;
+  const countryDropdown = document.querySelector('#country-dropdown');
+  const categoryDropdown = document.querySelector('#category-dropdown');
+
   d3.csv('data/country-programme-results-2019.csv').then(data => {
     dataset = data
 
@@ -8,20 +29,21 @@
     const countries = getDistinctValuesForField(dataset, 'Country');
     populateDropdown(countryDropdown, countries.sort());
 
+    // Populate Category dropdown
+    const categories = getDistinctValuesForField(dataset, 'Thematic Area Category');
+    populateDropdown(categoryDropdown, categories.sort(), (cat) => categoryNames[cat] || cat);
+
     drawMap();
   });
 
   // Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
   let map = d3.choropleth()
     .geofile('lib/d3-geomap/topojson/world/countries.json')
-    .colors(d3.schemeYlGnBu[9])
     .column('Initiative Count') // column to represent on heatmap
     .format(d => d)
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
   // Link dropdowns to map
-  const countryDropdown = document.querySelector('#country-dropdown');
-  const categoryDropdown = document.querySelector('#category-dropdown');
   let dispatch = d3.dispatch("change-category");
   categoryDropdown.addEventListener("change", () => { dispatch.call("change-category") });
   dispatch.on("change-category", drawMap);
@@ -29,8 +51,10 @@
   // Draws map 
   function drawMap() {
     if (dataset) {
-      const category = categoryDropdown[categoryDropdown.selectedIndex].text;
+      const category = categoryDropdown[categoryDropdown.selectedIndex].value;
       const categoryData = getDataForCategory(dataset, category);
+
+      map.colors(categoryColors[category] || d3.schemeBlues[9]);
 
       // Draw map
       d3.select('#map').select('svg').remove();
@@ -42,14 +66,15 @@
 /**
  * Populates given dropdown with given option values.
  * 
- * @param {HTMLElement} dropdown HTML dropdown element
- * @param {array}       options  Values to populate dropdown options with
+ * @param {HTMLElement} dropdown       HTML dropdown element
+ * @param {array}       options        Values to populate dropdown options with
+ * @param {Function}    getDisplayText Optional function to get option display text
  */
-function populateDropdown(dropdown, options) {
+function populateDropdown(dropdown, options, getDisplayText) {
   options.forEach(option => {
     let el = document.createElement("option");
-    el.text = option;
-    el.valye = option;
+    el.text = getDisplayText ? getDisplayText(option) : option;
+    el.value = option;
 
     dropdown.add(el);
   })
@@ -109,18 +134,3 @@ function getDataForCategory(data, category) {
 
   return countryCategoryCount;
 }
-
-// Modal 
-
-var modal = document.getElementById('myModal');
-var svg = $("#mysvg");
-
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-svg.on("click", function(d){
-  $("#myModal").show();
-});
