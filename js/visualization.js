@@ -111,16 +111,20 @@ function getDataForCategory(data, category) {
 }
 
 // Modal creation
+let modal = document.getElementById('intiative-modal');
+let openModalBtn = document.querySelector('.modal__open-btn');
+let closeModalBtn = document.querySelector('.modal__close-btn');
 
-var modal = document.getElementById('myModal');
-var svg = $("#country-dropdown");
-
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
+openModalBtn.onclick = () => {
+  modal.style.display = "block";
 }
 
-svg.on("click", function(d){
-  $("#myModal").show();
-});
+closeModalBtn.onclick = () => {
+  modal.style.display = "none";
+}
+
+window.onclick = (event) => {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
