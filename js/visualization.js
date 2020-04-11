@@ -35,9 +35,8 @@
 
     drawMap();
 
-    // Creates table
-    table()
-      ("#table", dataset);
+    // Create table
+    table("#table", dataset);
   });
 
   // Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
@@ -141,29 +140,30 @@ function getDataForCategory(data, category) {
 }
 
 // Creates table
-function table(data) {
+function table(selector, data) {
   let ourBrush = null,
     selectableElements = d3.select(null),
     dispatcher;
+
   function chart(selector, data) {
     let table = d3.select(selector)
       .append("table")
       .classed("my-table", true)
 
     // Filters the dataset to only get certain columns
-    let tableHeaders = Object.keys(data[0]).filter(key => {
-      return key == "Country"
-        || key == "Thematic Area" || key == "Thematic Area Category";
-    });
+    let tableHeaders = ["Country", "Thematic Area", "Thematic Area Category"];
 
-    var header = table.append("thead").append("tr")
+    let header = table
+      .append("thead")
+      .append("tr")
       .selectAll("th")
       .data(tableHeaders)
       .enter()
       .append("th")
       .text(d => { return d; })
 
-    var rows = table.append("tbody")
+    let rows = table
+      .append("tbody")
       .selectAll("tr")
       .data(data)
       .enter()
@@ -177,7 +177,8 @@ function table(data) {
           .style("background-color", "transparent");
       });
 
-    var cells = rows.selectAll("td")
+    let cells = rows
+      .selectAll("td")
       .data(row => {
         return tableHeaders.map((d, i) => {
           return { i: d, value: row[d] };
@@ -187,5 +188,6 @@ function table(data) {
       .append("td")
       .html(d => { return d.value; });
   };
-  return chart;
+
+  return chart(selector, data);
 }
