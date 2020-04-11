@@ -27,11 +27,11 @@ h3 {
 }
 
 .vis__left-panel {
-  width: 70%;
+  width: 60%;
 }
 
 .vis__right-panel {
-  width: 30%;
+  width: 40%;
 }
 
 .vis__dropdown {
@@ -45,7 +45,6 @@ h3 {
 .table-holder {
   height: 600px;
   overflow: auto;
-
 }
 /* Fix table layout */
 table {
@@ -53,7 +52,8 @@ table {
   border-spacing: 0 0;
 }
 
-th, td {
+th,
+td {
   border-bottom: 1px solid #bcc0c0;
 }
 
