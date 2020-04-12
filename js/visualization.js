@@ -140,8 +140,9 @@ function getDataForCategory(data, category) {
 }
 
 // Modal creation
-let modal = document.getElementById('intiative-modal');
+let modal = document.getElementById('initiative-modal');
 let closeModalBtn = document.querySelector('.modal__close-btn');
+let modalBody = document.getElementById('modal_body');
 
 // Close the modal by button or outside of modal option
 
@@ -170,6 +171,9 @@ function table(selector, data) {
 
     // Filters the dataset to only get certain columns
     let tableHeaders = ["Country", "Thematic Area", "Thematic Area Category"];
+    
+    // For the modal 
+    let info = ["Country", "Result Type", "Narrative"]
 
     let header = table
       .append("thead")
@@ -194,8 +198,10 @@ function table(selector, data) {
         d3.select(this)
           .style("background-color", "transparent");
       })
-      .on("click", function () {
+      .on("click", function (d) {
         modal.style.display = "block";
+        console.log(d);
+        document.getElementById('modal-text').innerHTML=d['Country']+" "+d['Thematic Area'];
       });
 
     let cells = rows
