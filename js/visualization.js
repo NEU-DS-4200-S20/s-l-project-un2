@@ -141,12 +141,9 @@ function getDataForCategory(data, category) {
 
 // Modal creation
 let modal = document.getElementById('intiative-modal');
-let openModalBtn = document.querySelector('.modal__open-btn');
 let closeModalBtn = document.querySelector('.modal__close-btn');
 
-openModalBtn.onclick = () => {
-  modal.style.display = "block";
-}
+// Close the modal by button or outside of modal option
 
 closeModalBtn.onclick = () => {
   modal.style.display = "none";
@@ -157,6 +154,8 @@ window.onclick = (event) => {
     modal.style.display = "none";
   }
 };
+
+
 
 // Creates table
 function table(selector, data) {
@@ -194,6 +193,9 @@ function table(selector, data) {
       .on("mouseout", function (d) {
         d3.select(this)
           .style("background-color", "transparent");
+      })
+      .on("click", function () {
+        modal.style.display = "block";
       });
 
     let cells = rows
