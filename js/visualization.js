@@ -47,13 +47,19 @@
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
   // Link dropdowns to map
-  let dispatch = d3.dispatch("change-category", "change-country");
+  let dispatch = d3.dispatch("change-category", "change-country", "zooming-map");
   categoryDropdown.addEventListener("change", () => { dispatch.call("change-category") });
   countryDropdown.addEventListener("change", (e) => { dispatch.call("change-country", {}, e.target.value) })
   dispatch.on("change-category", drawMap);
-  dispatch.on("change-country", selectCountry);
+  dispatch.on("change-country", dropdownToMap);
+  dispatch.on("zooming-map", mapToDropdown);
 
-function selectCountry(countryName) {
+function mapToDropdown(country) {
+  alert(country)
+  countryDropdown.value = country 
+}
+
+function dropdownToMap(countryName) {
   alert(countryName.replace(" ", "_"))
   path = document.querySelector(".unit.unit-" + countryName.replace(" ", "_"))
   title = path.querySelector("title")
@@ -64,6 +70,8 @@ function selectCountry(countryName) {
 
 map.clicked = zoomMap
   function zoomMap(d) {
+
+  dispatch.call("zooming-map", {}, d.properties.name)  
 
     //DANGER: DO NOT TOUCH
 
