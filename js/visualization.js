@@ -47,9 +47,50 @@
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
   // Link dropdowns to map
-  let dispatch = d3.dispatch("change-category");
+  let dispatch = d3.dispatch("change-category", "change-country");
   categoryDropdown.addEventListener("change", () => { dispatch.call("change-category") });
+  countryDropdown.addEventListener("change", (e) => { dispatch.call("change-country", {}, e.target.value) })
   dispatch.on("change-category", drawMap);
+  dispatch.on("change-country", selectCountry);
+
+function selectCountry(countryName) {
+  alert(countryName.replace(" ", "_"))
+  path = document.querySelector(".unit.unit-" + countryName.replace(" ", "_"))
+  title = path.querySelector("title")
+  path.dispatchEvent(new Event("click"))
+}
+
+
+
+map.clicked = zoomMap
+  function zoomMap(d) {
+
+    //DANGER: DO NOT TOUCH
+
+  let k = 1,
+            x0 = this.properties.width / 2,
+            y0 = this.properties.height / 2,
+            x = x0,
+            y = y0;
+
+        if (d && d.hasOwnProperty('geometry') && this._.centered !== d) {
+            let centroid = this.path.centroid(d);
+            x = centroid[0];
+            y = centroid[1];
+            k = this.properties.zoomFactor;
+            this._.centered = d;
+        } else {
+            this._.centered = null;
+        }
+
+        this.svg.selectAll('path.unit')
+           .classed('active', this._.centered && ((_) => _ === this._.centered));
+
+        this.svg.selectAll('g.zoom')
+            .transition()
+            .duration(750)
+.attr('transform', `translate(${x0}, ${y0})scale(${k})translate(-${x}, -${y})`);
+  }
 
 
   // Draws map 
