@@ -17,13 +17,13 @@
     "Harmful practices": d3.schemeBuGn[9]
   }
 
-  let filters = {};
-
-  // Import data
+  // Initialize values
   let dataset;
+  let filters = {};
   const countryDropdown = document.querySelector('#country-dropdown');
   const categoryDropdown = document.querySelector('#category-dropdown');
 
+  // Import data
   d3.csv('data/country-programme-results-2019.csv').then(data => {
     dataset = data
 
@@ -36,8 +36,6 @@
     populateDropdown(categoryDropdown, categories.sort(), (cat) => categoryNames[cat] || cat);
 
     drawMap();
-
-    // Create table
     createTable("#table", dataset);
   });
 
@@ -67,7 +65,7 @@
     filters["Country"] = countryDropdown.value;
 
     updateTable("#table", dataset, filters);
-    mapToDropdown(country);
+    dropdownToMap(country);
   }
 
   function mapToDropdown(country) {
@@ -133,77 +131,7 @@
   }
 })());
 
-/**
- * Populates given dropdown with given option values.
- * 
- * @param {HTMLElement} dropdown       HTML dropdown element
- * @param {array}       options        Values to populate dropdown options with
- * @param {Function}    getDisplayText Optional function to get option display text
- */
-function populateDropdown(dropdown, options, getDisplayText) {
-  options.forEach(option => {
-    let el = document.createElement("option");
-    el.text = getDisplayText ? getDisplayText(option) : option;
-    el.value = option;
-
-    dropdown.add(el);
-  })
-}
-
-/**
- * Gets the unique values for the given field of the given dataset.
- * 
- * @param {array}  data  Dataset
- * @param {string} field Data field (column) name
- * 
- * @returns {array} 
- */
-function getDistinctValuesForField(data, field) {
-  let distinctValues = {};
-
-  for (let i = 0; i < data.length; i++) {
-    const value = data[i][field];
-
-    if (distinctValues[value]) {
-      distinctValues[value]++;
-    } else if (value !== '') {
-      distinctValues[value] = 1;
-    }
-  }
-
-  return Object.keys(distinctValues);
-}
-
-/**
- * Constructs data to use for a heatmap of the given category.
- * 
- * @param {array}  data     Dataset
- * @param {string} category Thematic area category name
- * 
- * @returns {array}
- */
-function getDataForCategory(data, category) {
-  let entriesForCategory = data.filter(entry => entry['Thematic Area Category'].toLowerCase() == category.toLowerCase());
-
-  // Array of objects that look like this:
-  // {name: "Bangladesh", Thematic Area Category: "Sexual reproductive health", Category Count: 13}
-  let countryCategoryCount = entriesForCategory.reduce((result, entry) => {
-    let country = entry['Country'];
-
-    // Add to count if country has aleady been seen
-    for (let i = 0; i < result.length; i++) {
-      if (result[i]['name'] == country) {
-        result[i]['Initiative Count'] += 1;
-        return result;
-      }
-    }
-    // Push new object to array if country hasn't been seen yet
-    result.push({ 'name': country, 'Thematic Area Category': category, 'Initiative Count': 1 });
-    return result;
-  }, []);
-
-  return countryCategoryCount;
-}
+// ============================ TABLE ============================
 
 // Creates table
 function createTable(selector, data) {
@@ -250,12 +178,15 @@ function createTable(selector, data) {
     .html(d => { return d.value; });
 }
 
+// Updates table with filters
 function updateTable(selector, data, filters = {}) {
   let table = d3.select(selector);
   let tableHeaders = ["Country", "Thematic Area", "Thematic Area Category"];
 
+  // Remove existing rows
   table.select('tbody').selectAll('tr').remove();
 
+  // Filter function
   const shouldDisplayRow = (row) => {
     for (let [col, val] of Object.entries(filters)) {
       if (row[col] != val) {
@@ -266,6 +197,7 @@ function updateTable(selector, data, filters = {}) {
     return true;
   }
 
+  // Update rows
   let rows = table.select('tbody')
     .selectAll("tr")
     .data(data.filter(shouldDisplayRow))
@@ -283,3 +215,58 @@ function updateTable(selector, data, filters = {}) {
     .append("td")
     .html(d => { return d.value; });
 }
+
+// ============================ UTILITIES ============================
+
+// Gets the unique values for the given field of the given dataset
+function getDistinctValuesForField(data, field) {
+  let distinctValues = {};
+
+  for (let i = 0; i < data.length; i++) {
+    const value = data[i][field];
+
+    if (distinctValues[value]) {
+      distinctValues[value]++;
+    } else if (value !== '') {
+      distinctValues[value] = 1;
+    }
+  }
+
+  return Object.keys(distinctValues);
+}
+
+// Populates given dropdown with given option values
+function populateDropdown(dropdown, options, getDisplayText) {
+  options.forEach(option => {
+    let el = document.createElement("option");
+    el.text = getDisplayText ? getDisplayText(option) : option;
+    el.value = option;
+
+    dropdown.add(el);
+  })
+}
+
+// Constructs data to use for a heatmap of the given category
+function getDataForCategory(data, category) {
+  let entriesForCategory = data.filter(entry => entry['Thematic Area Category'].toLowerCase() == category.toLowerCase());
+
+  // Array of objects that look like this:
+  // {name: "Bangladesh", Thematic Area Category: "Sexual reproductive health", Category Count: 13}
+  let countryCategoryCount = entriesForCategory.reduce((result, entry) => {
+    let country = entry['Country'];
+
+    // Add to count if country has aleady been seen
+    for (let i = 0; i < result.length; i++) {
+      if (result[i]['name'] == country) {
+        result[i]['Initiative Count'] += 1;
+        return result;
+      }
+    }
+    // Push new object to array if country hasn't been seen yet
+    result.push({ 'name': country, 'Thematic Area Category': category, 'Initiative Count': 1 });
+    return result;
+  }, []);
+
+  return countryCategoryCount;
+}
+
