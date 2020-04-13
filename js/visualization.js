@@ -187,6 +187,11 @@ function createTable(selector, data) {
     .on("mouseout", function (d) {
       d3.select(this)
         .style("background-color", "transparent");
+    })
+    .on("click", function (d) {
+      modal.style.display = "block";
+      document.getElementById('modal-text1').innerHTML = d['Country'] + "            -          " + d['Content Area'];
+      document.getElementById('modal-text2').innerHTML = d['Narrative'];
     });
 
   let cells = rows
@@ -226,6 +231,19 @@ function updateTable(selector, data, filters = {}) {
     .data(data.filter(shouldDisplayRow))
     .enter()
     .append("tr")
+    .on("mouseover", function (d) {
+      d3.select(this)
+        .style("background-color", "#bcc0c0");
+    })
+    .on("mouseout", function (d) {
+      d3.select(this)
+        .style("background-color", "transparent");
+    })
+    .on("click", function (d) {
+      modal.style.display = "block";
+      document.getElementById('modal-text1').innerHTML = d['Country'] + "            -          " + d['Content Area'];
+      document.getElementById('modal-text2').innerHTML = d['Narrative'];
+    });
 
   let cells = rows
     .selectAll("td")
@@ -238,6 +256,23 @@ function updateTable(selector, data, filters = {}) {
     .append("td")
     .html(d => { return d.value; });
 }
+
+// ============================ MODAL ============================
+let modal = document.getElementById('initiative-modal');
+let closeModalBtn = document.querySelector('.modal__close-btn');
+let modalBody = document.getElementById('modal_body');
+
+// Close modal when user clicks close button
+closeModalBtn.onclick = () => {
+  modal.style.display = "none";
+}
+
+// Close modal when user clicks outside of it
+window.onclick = (event) => {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
 
 // ============================ UTILITIES ============================
 
