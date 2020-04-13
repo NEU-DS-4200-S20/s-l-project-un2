@@ -197,7 +197,8 @@ function table(selector, data) {
       })
       .on("click", function (d) {
         modal.style.display = "block";
-        document.getElementById('modal-text').innerHTML=d['Country']+"    "+d['Thematic Area']+"\n"+d['Narrative'];
+        document.getElementById('modal-text1').innerHTML=d['Country']+"            -          "+d['Content Area'];
+        document.getElementById('modal-text2').innerHTML=d['Narrative'];
       });
 
     let cells = rows
