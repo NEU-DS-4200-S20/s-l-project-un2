@@ -69,10 +69,10 @@
   }
 
   function mapToDropdown(country) {
-    countryDropdown.value = country;
     filters["Country"] = countryDropdown.value;
 
     updateTable("#table", dataset, filters);
+    countryDropdown.value = country;
   }
 
   function dropdownToMap(countryName) {
