@@ -69,14 +69,13 @@
   }
 
   function mapToDropdown(country) {
-    alert(country)
-    countryDropdown.value = country
-    countryDropdown.value = country
-    countryDropdown.value = country
+    countryDropdown.value = country;
+    filters["Country"] = countryDropdown.value;
+
+    updateTable("#table", dataset, filters);
   }
 
   function dropdownToMap(countryName) {
-    alert(countryName.replace(" ", "_"))
     path = document.querySelector(".unit.unit-" + countryName.replace(" ", "_"))
     title = path.querySelector("title")
     path.dispatchEvent(new Event("click"))
@@ -269,4 +268,3 @@ function getDataForCategory(data, category) {
 
   return countryCategoryCount;
 }
-
