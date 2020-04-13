@@ -8,13 +8,17 @@ body {
 }
 
 .d3-geomap .active {
-  fill: #ffffff
+  fill: #ffffff;
 }
 
 h1,
 h2,
 h3 {
   line-height: 1.2;
+}
+
+img {
+  width: 100%;
 }
 
 /* Your text should be in a nice narrow column */
