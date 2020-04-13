@@ -47,9 +47,70 @@
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
   // Link dropdowns to map
-  let dispatch = d3.dispatch("change-category");
+  let dispatch = d3.dispatch("change-category", "change-country", "zooming-map", "country-selected");
   categoryDropdown.addEventListener("change", () => { dispatch.call("change-category") });
+  countryDropdown.addEventListener("change", (e) => { dispatch.call("change-country", {}, e.target.value) })
   dispatch.on("change-category", drawMap);
+  dispatch.on("change-country", dropdownToMap);
+  dispatch.on("zooming-map", mapToDropdown);
+  dispatch.on("country-selected", countrySelected);
+
+//meeting point after the dropdown and map agree
+function countrySelected(country) {
+  path = document.querySelector(".unit.unit-" + country)
+  path.getAttribute("class")
+  g = document.querySelector("g")
+  g.appendChild(path)
+  //TODO pop up modal with data for selected country
+}
+
+//the map was just clicked, so change the dropdown to reflect this
+function mapToDropdown(country) {
+  countryDropdown.value = country 
+  dispatch.call("country-selected", {}, country) 
+}
+
+//the dropdown was just changed, so change the map to reflect this
+function dropdownToMap(countryName) {
+  path = document.querySelector(".unit.unit-" + countryName)
+  title = path.querySelector("title")
+  path.dispatchEvent(new Event("click"))
+}
+//take whatever function is at map.clicked and put zoomMap there instead
+map.clicked = zoomMap
+
+  function zoomMap(d) {
+
+  //tell dispatch that the map was clicked
+  dispatch.call("zooming-map", {}, d.properties.name)  
+
+  //this code is the body of the function that was at map.clicked
+  //BEFORE we changed it, so it still does the zooming like before
+
+  let k = 1,
+            x0 = this.properties.width / 2,
+            y0 = this.properties.height / 2,
+            x = x0,
+            y = y0;
+
+        if (d && d.hasOwnProperty('geometry') && this._.centered !== d) {
+            let centroid = this.path.centroid(d);
+            x = centroid[0];
+            y = centroid[1];
+            k = this.properties.zoomFactor;
+            this._.centered = d;
+        } else {
+            this._.centered = null;
+        }
+
+        this.svg.selectAll('path.unit')
+           .classed('active', this._.centered && ((_) => _ === this._.centered));
+
+        this.svg.selectAll('g.zoom')
+            .transition()
+            .duration(750)
+.attr('transform', `translate(${x0}, ${y0})scale(${k})translate(-${x}, -${y})`);
+  }
 
 
   // Draws map 
