@@ -17,6 +17,8 @@
     "Harmful practices": d3.schemeBuGn[9]
   }
 
+  let filters = {};
+
   // Import data
   let dataset;
   const countryDropdown = document.querySelector('#country-dropdown');
@@ -36,7 +38,7 @@
     drawMap();
 
     // Create table
-    table("#table", dataset);
+    createTable("#table", dataset);
   });
 
   // Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
@@ -50,61 +52,76 @@
   let dispatch = d3.dispatch("change-category", "change-country", "zooming-map");
   categoryDropdown.addEventListener("change", () => { dispatch.call("change-category") });
   countryDropdown.addEventListener("change", (e) => { dispatch.call("change-country", {}, e.target.value) })
-  dispatch.on("change-category", drawMap);
-  dispatch.on("change-country", dropdownToMap);
+  dispatch.on("change-category", onChangeCategory);
+  dispatch.on("change-country", onChangeCountry);
   dispatch.on("zooming-map", mapToDropdown);
 
-function mapToDropdown(country) {
-  alert(country)
-  countryDropdown.value = country 
-}
+  function onChangeCategory() {
+    filters["Thematic Area Category"] = categoryDropdown.value;
 
-function dropdownToMap(countryName) {
-  alert(countryName.replace(" ", "_"))
-  path = document.querySelector(".unit.unit-" + countryName.replace(" ", "_"))
-  title = path.querySelector("title")
-  path.dispatchEvent(new Event("click"))
-}
+    updateTable("#table", dataset, filters);
+    drawMap();
+  }
 
+  function onChangeCountry(country) {
+    filters["Country"] = countryDropdown.value;
 
+    updateTable("#table", dataset, filters);
+    mapToDropdown(country);
+  }
 
-map.clicked = zoomMap
+  function mapToDropdown(country) {
+    alert(country)
+    countryDropdown.value = country
+    countryDropdown.value = country
+    countryDropdown.value = country
+  }
+
+  function dropdownToMap(countryName) {
+    alert(countryName.replace(" ", "_"))
+    path = document.querySelector(".unit.unit-" + countryName.replace(" ", "_"))
+    title = path.querySelector("title")
+    path.dispatchEvent(new Event("click"))
+  }
+
+  map.clicked = zoomMap
   function zoomMap(d) {
 
-  dispatch.call("zooming-map", {}, d.properties.name)  
+    dispatch.call("zooming-map", {}, d.properties.name)
+    dispatch.call("zooming-map", {}, d.properties.name)
+    dispatch.call("zooming-map", {}, d.properties.name)
 
     //DANGER: DO NOT TOUCH
 
-  let k = 1,
-            x0 = this.properties.width / 2,
-            y0 = this.properties.height / 2,
-            x = x0,
-            y = y0;
+    let k = 1,
+      x0 = this.properties.width / 2,
+      y0 = this.properties.height / 2,
+      x = x0,
+      y = y0;
 
-        if (d && d.hasOwnProperty('geometry') && this._.centered !== d) {
-            let centroid = this.path.centroid(d);
-            x = centroid[0];
-            y = centroid[1];
-            k = this.properties.zoomFactor;
-            this._.centered = d;
-        } else {
-            this._.centered = null;
-        }
+    if (d && d.hasOwnProperty('geometry') && this._.centered !== d) {
+      let centroid = this.path.centroid(d);
+      x = centroid[0];
+      y = centroid[1];
+      k = this.properties.zoomFactor;
+      this._.centered = d;
+    } else {
+      this._.centered = null;
+    }
 
-        this.svg.selectAll('path.unit')
-           .classed('active', this._.centered && ((_) => _ === this._.centered));
+    this.svg.selectAll('path.unit')
+      .classed('active', this._.centered && ((_) => _ === this._.centered));
 
-        this.svg.selectAll('g.zoom')
-            .transition()
-            .duration(750)
-.attr('transform', `translate(${x0}, ${y0})scale(${k})translate(-${x}, -${y})`);
+    this.svg.selectAll('g.zoom')
+      .transition()
+      .duration(750)
+      .attr('transform', `translate(${x0}, ${y0})scale(${k})translate(-${x}, -${y})`);
   }
-
 
   // Draws map 
   function drawMap() {
     if (dataset) {
-      const category = categoryDropdown[categoryDropdown.selectedIndex].value;
+      const category = categoryDropdown.value;
       const categoryData = getDataForCategory(dataset, category);
 
       map.colors(categoryColors[category] || d3.schemeBlues[9]);
@@ -189,54 +206,80 @@ function getDataForCategory(data, category) {
 }
 
 // Creates table
-function table(selector, data) {
-  let ourBrush = null,
-    selectableElements = d3.select(null),
-    dispatcher;
+function createTable(selector, data) {
+  let table = d3.select(selector)
+    .append("table")
+    .classed("my-table", true)
 
-  function chart(selector, data) {
-    let table = d3.select(selector)
-      .append("table")
-      .classed("my-table", true)
+  // Columns to display
+  let tableHeaders = ["Country", "Thematic Area", "Thematic Area Category"];
 
-    // Filters the dataset to only get certain columns
-    let tableHeaders = ["Country", "Thematic Area", "Thematic Area Category"];
+  let header = table
+    .append("thead")
+    .append("tr")
+    .selectAll("th")
+    .data(tableHeaders)
+    .enter()
+    .append("th")
+    .text(d => { return d; })
 
-    let header = table
-      .append("thead")
-      .append("tr")
-      .selectAll("th")
-      .data(tableHeaders)
-      .enter()
-      .append("th")
-      .text(d => { return d; })
+  let rows = table
+    .append("tbody")
+    .selectAll("tr")
+    .data(data)
+    .enter()
+    .append("tr")
+    .on("mouseover", function (d) {
+      d3.select(this)
+        .style("background-color", "#bcc0c0");
+    })
+    .on("mouseout", function (d) {
+      d3.select(this)
+        .style("background-color", "transparent");
+    });
 
-    let rows = table
-      .append("tbody")
-      .selectAll("tr")
-      .data(data)
-      .enter()
-      .append("tr")
-      .on("mouseover", function (d) {
-        d3.select(this)
-          .style("background-color", "#bcc0c0");
-      })
-      .on("mouseout", function (d) {
-        d3.select(this)
-          .style("background-color", "transparent");
+  let cells = rows
+    .selectAll("td")
+    .data(row => {
+      return tableHeaders.map((d, i) => {
+        return { i: d, value: row[d] };
       });
+    })
+    .enter()
+    .append("td")
+    .html(d => { return d.value; });
+}
 
-    let cells = rows
-      .selectAll("td")
-      .data(row => {
-        return tableHeaders.map((d, i) => {
-          return { i: d, value: row[d] };
-        });
-      })
-      .enter()
-      .append("td")
-      .html(d => { return d.value; });
-  };
+function updateTable(selector, data, filters = {}) {
+  let table = d3.select(selector);
+  let tableHeaders = ["Country", "Thematic Area", "Thematic Area Category"];
 
-  return chart(selector, data);
+  table.select('tbody').selectAll('tr').remove();
+
+  const shouldDisplayRow = (row) => {
+    for (let [col, val] of Object.entries(filters)) {
+      if (row[col] != val) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  let rows = table.select('tbody')
+    .selectAll("tr")
+    .data(data.filter(shouldDisplayRow))
+    .enter()
+    .append("tr")
+
+  let cells = rows
+    .selectAll("td")
+    .data(row => {
+      return tableHeaders.map((d, i) => {
+        return { i: d, value: row[d] };
+      });
+    })
+    .enter()
+    .append("td")
+    .html(d => { return d.value; });
 }
