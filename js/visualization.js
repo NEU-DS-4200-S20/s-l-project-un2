@@ -20,6 +20,8 @@
   // Initialize values
   let dataset;
   let filters = {};
+
+  // Initialize dropdown filters
   const countryDropdown = document.querySelector('#country-dropdown');
   const categoryDropdown = document.querySelector('#category-dropdown');
 
@@ -30,10 +32,12 @@
     // Populate Country dropdown
     const countries = getDistinctValuesForField(dataset, 'Country');
     populateDropdown(countryDropdown, countries.sort());
+    countryDropdown.addEventListener("change", onChangeCountry)
 
     // Populate Category dropdown
     const categories = getDistinctValuesForField(dataset, 'Thematic Area Category');
     populateDropdown(categoryDropdown, categories.sort(), (cat) => categoryNames[cat] || cat);
+    categoryDropdown.addEventListener("change", onChangeCategory);
 
     drawMap();
     createTable("#table", dataset);
@@ -47,48 +51,56 @@
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
   // Link dropdowns to map
-  let dispatch = d3.dispatch("change-category", "change-country", "zooming-map");
-  categoryDropdown.addEventListener("change", () => { dispatch.call("change-category") });
-  countryDropdown.addEventListener("change", (e) => { dispatch.call("change-country", {}, e.target.value) })
-  dispatch.on("change-category", onChangeCategory);
-  dispatch.on("change-country", onChangeCountry);
-  dispatch.on("zooming-map", mapToDropdown);
+  let dispatch = d3.dispatch("zooming-map");
+  dispatch.on("zooming-map", updateDropdownFromMap);
 
+  // Update table and map when category changes
   function onChangeCategory() {
     filters["Thematic Area Category"] = categoryDropdown.value;
-
     updateTable("#table", dataset, filters);
+
     drawMap();
   }
 
-  function onChangeCountry(country) {
-    filters["Country"] = countryDropdown.value;
+  // Update table and map when country changes
+  function onChangeCountry() {
+    const country = countryDropdown.value;
+
+    if (country) {
+      filters["Country"] = country;
+    } else {
+      delete filters["Country"];
+    }
 
     updateTable("#table", dataset, filters);
-    dropdownToMap(country);
+    updateMapFromDropdown(country);
   }
 
-  function mapToDropdown(country) {
+  // Update dropdown selection when user selects a country on map
+  function updateDropdownFromMap(country) {
     filters["Country"] = countryDropdown.value;
-
     updateTable("#table", dataset, filters);
+
     countryDropdown.value = country;
   }
 
-  function dropdownToMap(countryName) {
-    path = document.querySelector(".unit.unit-" + countryName.replace(" ", "_"))
-    title = path.querySelector("title")
-    path.dispatchEvent(new Event("click"))
+  // Update map selection when user selects a country from dropdown
+  function updateMapFromDropdown(country) {
+    let path = document.querySelector(".unit.unit-" + country)
+    if (path) {
+      path.dispatchEvent(new Event("click"));
+    }
   }
 
+  // Set map click callback to zoomMap
   map.clicked = zoomMap
+
   function zoomMap(d) {
-
-    dispatch.call("zooming-map", {}, d.properties.name)
-    dispatch.call("zooming-map", {}, d.properties.name)
+    // tell dispatch that the map was clicked
     dispatch.call("zooming-map", {}, d.properties.name)
 
-    //DANGER: DO NOT TOUCH
+    // this code is the body of the function that was at map.clicked
+    // BEFORE we changed it, so it still does the zooming like before
 
     let k = 1,
       x0 = this.properties.width / 2,
@@ -119,13 +131,19 @@
   function drawMap() {
     if (dataset) {
       const category = categoryDropdown.value;
+      const country = countryDropdown.value;
       const categoryData = getDataForCategory(dataset, category);
 
+      // Set colors according to category
       map.colors(categoryColors[category] || d3.schemeBlues[9]);
 
       // Draw map
       d3.select('#map').select('svg').remove();
       map.draw(d3.select("#map").datum(categoryData));
+
+      if (country) {
+        updateMapFromDropdown(country);
+      }
     }
   }
 })());

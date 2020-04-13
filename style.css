@@ -7,6 +7,10 @@ body {
     "franklin gothic medium", "century gothic", "Liberation Sans", sans-serif;
 }
 
+.d3-geomap .active {
+  fill: #ffffff
+}
+
 h1,
 h2,
 h3 {
