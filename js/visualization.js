@@ -32,12 +32,10 @@
     // Populate Country dropdown
     const countries = getDistinctValuesForField(dataset, 'Country');
     populateDropdown(countryDropdown, countries.sort());
-    countryDropdown.addEventListener("change", onChangeCountry)
 
     // Populate Category dropdown
     const categories = getDistinctValuesForField(dataset, 'Thematic Area Category');
     populateDropdown(categoryDropdown, categories.sort(), (cat) => categoryNames[cat] || cat);
-    categoryDropdown.addEventListener("change", onChangeCategory);
 
     drawMap();
     createTable("#table", dataset);
@@ -51,14 +49,22 @@
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
   // Link dropdowns to map
-  let dispatch = d3.dispatch("zooming-map");
-  dispatch.on("zooming-map", updateDropdownFromMap);
+  let dispatch = d3.dispatch("map-changed");
+  dispatch.on("map-changed", updateDropdownFromMap);
+  countryDropdown.addEventListener("change", onChangeCountry);
+  categoryDropdown.addEventListener("change", onChangeCategory);
 
   // Update table and map when category changes
   function onChangeCategory() {
-    filters["Thematic Area Category"] = categoryDropdown.value;
-    updateTable("#table", dataset, filters);
+    const category = categoryDropdown.value;
 
+    if (category) {
+      filters["Thematic Area Category"] = categoryDropdown.value;
+    } else {
+      delete filters["Thematic Area Category"];
+    }
+
+    updateTable("#table", dataset, filters);
     drawMap();
   }
 
@@ -86,9 +92,11 @@
 
   // Update map selection when user selects a country from dropdown
   function updateMapFromDropdown(country) {
-    let path = document.querySelector(".unit.unit-" + country)
-    if (path) {
+    if (country) {
+      let path = document.querySelector(".unit.unit-" + country)
       path.dispatchEvent(new Event("click"));
+    } else {
+      // TODO: Zoom out of map somehow
     }
   }
 
@@ -96,12 +104,10 @@
   map.clicked = zoomMap
 
   function zoomMap(d) {
-    // tell dispatch that the map was clicked
-    dispatch.call("zooming-map", {}, d.properties.name)
+    // Tell dispatch that map changed
+    dispatch.call("map-changed", {}, d.properties.name)
 
-    // this code is the body of the function that was at map.clicked
-    // BEFORE we changed it, so it still does the zooming like before
-
+    // Original zooming implementation from d3-geomap libary 
     let k = 1,
       x0 = this.properties.width / 2,
       y0 = this.properties.height / 2,
