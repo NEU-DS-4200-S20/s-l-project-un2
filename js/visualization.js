@@ -84,10 +84,10 @@
 
   // Update dropdown selection when user selects a country on map
   function updateDropdownFromMap(country) {
-    filters["Country"] = countryDropdown.value;
-    updateTable("#table", dataset, filters);
-
     countryDropdown.value = country;
+
+    filters["Country"] = country;
+    updateTable("#table", dataset, filters);
   }
 
   // Update map selection when user selects a country from dropdown
