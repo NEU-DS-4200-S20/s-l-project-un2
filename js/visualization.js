@@ -47,33 +47,45 @@
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
   // Link dropdowns to map
-  let dispatch = d3.dispatch("change-category", "change-country", "zooming-map");
+  let dispatch = d3.dispatch("change-category", "change-country", "zooming-map", "country-selected");
   categoryDropdown.addEventListener("change", () => { dispatch.call("change-category") });
   countryDropdown.addEventListener("change", (e) => { dispatch.call("change-country", {}, e.target.value) })
   dispatch.on("change-category", drawMap);
   dispatch.on("change-country", dropdownToMap);
   dispatch.on("zooming-map", mapToDropdown);
+  dispatch.on("country-selected", countrySelected);
 
-function mapToDropdown(country) {
-  alert(country)
-  countryDropdown.value = country 
+//meeting point after the dropdown and map agree
+function countrySelected(country) {
+  path = document.querySelector(".unit.unit-" + country)
+  path.getAttribute("class")
+  g = document.querySelector("g")
+  g.appendChild(path)
+  //TODO pop up modal with data for selected country
 }
 
+//the map was just clicked, so change the dropdown to reflect this
+function mapToDropdown(country) {
+  countryDropdown.value = country 
+  dispatch.call("country-selected", {}, country) 
+}
+
+//the dropdown was just changed, so change the map to reflect this
 function dropdownToMap(countryName) {
-  alert(countryName.replace(" ", "_"))
-  path = document.querySelector(".unit.unit-" + countryName.replace(" ", "_"))
+  path = document.querySelector(".unit.unit-" + countryName)
   title = path.querySelector("title")
   path.dispatchEvent(new Event("click"))
 }
-
-
-
+//take whatever function is at map.clicked and put zoomMap there instead
 map.clicked = zoomMap
+
   function zoomMap(d) {
 
+  //tell dispatch that the map was clicked
   dispatch.call("zooming-map", {}, d.properties.name)  
 
-    //DANGER: DO NOT TOUCH
+  //this code is the body of the function that was at map.clicked
+  //BEFORE we changed it, so it still does the zooming like before
 
   let k = 1,
             x0 = this.properties.width / 2,
