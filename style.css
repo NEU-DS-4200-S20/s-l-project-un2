@@ -71,7 +71,7 @@ table {
 }
 
 th {
-  padding: 15px 6px 6px 6px;
+  padding: 15px 10px 6px 10px;
 }
 
 tbody tr:hover {
@@ -86,7 +86,7 @@ td {
 }
 
 td {
-  padding: 6px;
+  padding: 6px 10px;
 }
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
