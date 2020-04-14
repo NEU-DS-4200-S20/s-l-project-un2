@@ -180,14 +180,6 @@ function createTable(selector, data) {
     .data(data)
     .enter()
     .append("tr")
-    .on("mouseover", function (d) {
-      d3.select(this)
-        .style("background-color", "#bcc0c0");
-    })
-    .on("mouseout", function (d) {
-      d3.select(this)
-        .style("background-color", "transparent");
-    })
     .on("click", function (d) {
       modal.style.display = "block";
       document.getElementById('modal-text1').innerHTML = d['Country'] + "            -          " + d['Content Area'];
@@ -231,14 +223,6 @@ function updateTable(selector, data, filters = {}) {
     .data(data.filter(shouldDisplayRow))
     .enter()
     .append("tr")
-    .on("mouseover", function (d) {
-      d3.select(this)
-        .style("background-color", "#bcc0c0");
-    })
-    .on("mouseout", function (d) {
-      d3.select(this)
-        .style("background-color", "transparent");
-    })
     .on("click", function (d) {
       modal.style.display = "block";
       document.getElementById('modal-text1').innerHTML = d['Country'] + "            -          " + d['Content Area'];

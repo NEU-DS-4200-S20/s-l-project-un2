@@ -11,6 +11,12 @@
     <link rel="stylesheet" href="style.css" />
     <link href="lib/d3-geomap/d3-geomap.css" rel="stylesheet" />
 
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Favicons -->
     <link
       rel="apple-touch-icon"
@@ -93,24 +99,27 @@
     <!-- Your visualization here -->
 
     <div class="vis-holder">
-      <!-- Change viewbox to whatever you want, e.g. "0 0 1000 6000" This determines your aspect ratio and coordinate system -->
-      <div class="d3-geomap vis__left-panel">
-        <div id="map"></div>
-      </div>
+      <h2 class="vis__title">UNFPA Global Learning Map</h2>
+      <div class="vis__dual-panel">
+        <!-- Change viewbox to whatever you want, e.g. "0 0 1000 6000" This determines your aspect ratio and coordinate system -->
+        <div class="d3-geomap vis__left-panel">
+          <div id="map"></div>
+        </div>
 
-      <div class="vis__right-panel">
-        <!--Dropdown menus-->
-        <label for="category-dropdown">Category</label>
-        <select id="category-dropdown" class="vis__dropdown">
-          <option value="">Select a category</option>
-        </select>
+        <div class="vis__right-panel">
+          <!--Dropdown menus-->
+          <label for="category-dropdown">Category</label>
+          <select id="category-dropdown" class="vis__dropdown">
+            <option value="">Select a category</option>
+          </select>
 
-        <label for="country-dropdown">Country</label>
-        <select id="country-dropdown" class="vis__dropdown">
-          <option value="">Select a country</option>
-        </select>
+          <label for="country-dropdown">Country</label>
+          <select id="country-dropdown" class="vis__dropdown">
+            <option value="">Select a country</option>
+          </select>
 
-        <div class="table-holder" id="table"></div>
+          <div class="table-holder" id="table"></div>
+        </div>
       </div>
     </div>
 
@@ -169,7 +178,23 @@
 
       <p>
         <em>
-        The visualization is an interactive world map that has a linked modal table that provides the details of the data. The visualization presents two facets to the data: Category (of the types of initiative) and Country. Both of these can be selected directly with the dropdown filters, but there is also interaction in the visualization. By clicking on a country on the map, that country is zoomed in and outlined to provide feedback about the selection. The two halves of the visualization are linked, so changes in one are reflected in the other. We choose to use a map as our external partners requested it, and we used a table because the data is largely qualitative and resists quantitization. The map also serves as a heatmap of total counts of inititives for the selected category. Once the user has selected a point in the 2-dimensional Category-Country plane, they are free to move along either the Country or Category line to explore the data, which is a set of initiatives with some qualities. The tasks we chose to support were what we identified as the most important from our task analysis.</em
+          The visualization is an interactive world map that has a linked modal
+          table that provides the details of the data. The visualization
+          presents two facets to the data: Category (of the types of initiative)
+          and Country. Both of these can be selected directly with the dropdown
+          filters, but there is also interaction in the visualization. By
+          clicking on a country on the map, that country is zoomed in and
+          outlined to provide feedback about the selection. The two halves of
+          the visualization are linked, so changes in one are reflected in the
+          other. We choose to use a map as our external partners requested it,
+          and we used a table because the data is largely qualitative and
+          resists quantitization. The map also serves as a heatmap of total
+          counts of inititives for the selected category. Once the user has
+          selected a point in the 2-dimensional Category-Country plane, they are
+          free to move along either the Country or Category line to explore the
+          data, which is a set of initiatives with some qualities. The tasks we
+          chose to support were what we identified as the most important from
+          our task analysis.</em
         >
       </p>
 

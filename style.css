@@ -7,10 +7,6 @@ body {
     "franklin gothic medium", "century gothic", "Liberation Sans", sans-serif;
 }
 
-.d3-geomap .active {
-  fill: #ffffff;
-}
-
 h1,
 h2,
 h3 {
@@ -21,16 +17,26 @@ img {
   width: 100%;
 }
 
-/* Your text should be in a nice narrow column */
 .content-column {
   max-width: 650px;
   margin: 40px auto;
 }
 
-/* But your visualization should be full-width and full-height */
+/* VISUALIZATION */
+
 .vis-holder {
-  width: 100%;
+  font-family: "Libre Franklin", Arial, Helvetica, sans-serif;
   height: 100%;
+  background-color: #f4f4f4;
+  padding: 20px 10px 50px 10px;
+}
+
+.vis__title {
+  font-size: 42px;
+  font-weight: 400;
+}
+
+.vis__dual-panel {
   display: flex;
 }
 
@@ -50,19 +56,37 @@ img {
   margin-bottom: 20px;
 }
 
+/* TABLE */
 .table-holder {
   height: 600px;
   overflow: auto;
+  background-color: white;
+  border-radius: 10px;
 }
-/* Fix table layout */
+
 table {
+  width: 100%;
   font-size: 14px;
   border-spacing: 0 0;
 }
 
+th {
+  padding: 15px 10px 6px 10px;
+}
+
+tbody tr:hover {
+  background-color: #e5e5e5;
+  cursor: pointer;
+}
+
 th,
 td {
-  border-bottom: 1px solid #bcc0c0;
+  text-align: left;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+td {
+  padding: 6px 10px;
 }
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
