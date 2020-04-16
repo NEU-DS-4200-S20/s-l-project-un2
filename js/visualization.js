@@ -244,7 +244,6 @@ function updateTable(selector, data, filters = {}) {
 // ============================ MODAL ============================
 let modal = document.getElementById('initiative-modal');
 let closeModalBtn = document.querySelector('.modal__close-btn');
-let modalBody = document.getElementById('modal_body');
 
 // Close modal when user clicks close button
 closeModalBtn.onclick = () => {
