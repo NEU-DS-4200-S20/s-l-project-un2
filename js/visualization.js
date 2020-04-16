@@ -229,6 +229,14 @@ function updateTable(selector, data, filters = {}) {
       document.getElementById('modal-text2').innerHTML = d['Narrative'];
     });
 
+
+  // Hide table if no rows to display
+  if (rows.size() == 0) {
+    table.style("display", "none");
+  } else {
+    table.style("display", "block");
+  }
+
   let cells = rows
     .selectAll("td")
     .data(row => {
