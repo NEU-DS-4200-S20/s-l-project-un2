@@ -48,12 +48,19 @@ img {
   width: 40%;
 }
 
+/* DROPDOWNS */
 .vis__dropdown {
   display: block;
 }
 
 .vis__dropdown:not(:last-child) {
   margin-bottom: 20px;
+}
+
+.vis__dropdown-label {
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
 }
 
 /* TABLE */
