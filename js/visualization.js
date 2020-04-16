@@ -4,7 +4,7 @@
     "Bosnia & Herzegovina": "Bosnia and Herzegovina",
     "C\u00f4te D'Ivoire": "C\u00f4te DIvoire",
     "Eswatini (Swaziland)": "Eswatini",
-    "S\u00e3o Tom\u00e9 & Principe": "S\u00e3o Tom\u00e9 and Príncipe"
+    "S\u00e3o Tom\u00e9 & Principe": "S\u00e3o Tom\u00e9 and Pr\u00edncipe"
   }
 
   // Mapping of category names in data to a display name
@@ -94,7 +94,7 @@
 
   // Update dropdown selection when user selects a country on map
   function updateDropdownFromMap(country) {
-    let countryDropdownName = getKeyByValue(countryTopojsonNames, country) || country;
+    const countryDropdownName = getKeyByValue(countryTopojsonNames, country) || country;
     countryDropdown.value = countryDropdownName;
 
     filters["Country"] = countryDropdownName;
@@ -104,7 +104,10 @@
   // Update map selection when user selects a country from dropdown
   function updateMapFromDropdown(country) {
     if (country) {
-      let path = document.querySelector(".unit.unit-" + countryTopojsonNames[country] || country);
+      const countrySVGName = (countryTopojsonNames[country] || country).replace(/ /g,"_");
+      console.log(countrySVGName);
+      let path = document.querySelector(".unit.unit-" + countrySVGName);
+      console.log(path);
       path.dispatchEvent(new Event("click"));
     } else {
       // TODO: Zoom out of map somehow
