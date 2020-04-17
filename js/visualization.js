@@ -142,7 +142,7 @@ function getDataForCategory(data, category) {
 // Modal creation
 let modal = document.getElementById('initiative-modal');
 let closeModalBtn = document.querySelector('.modal__close-btn');
-let modalBody = document.getElementById('modal_body');
+
 
 // Close the modal by button or outside of modal option
 
@@ -197,7 +197,8 @@ function table(selector, data) {
       })
       .on("click", function (d) {
         modal.style.display = "block";
-        document.getElementById('modal-text1').innerHTML=d['Country']+"            -          "+d['Content Area'];
+        document.getElementById('modal-country').innerHTML=d['Country'];
+        document.getElementById('modal-text1').innerHTML=d['Thematic Area']+d['Content Area']+d['Result Type'];
         document.getElementById('modal-text2').innerHTML=d['Narrative'];
       });
 
