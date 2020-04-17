@@ -40,7 +40,7 @@ let filters = {};
 
 d3.csv('data/country-programme-results-2019.csv').then(data => {
   dataset = data.sort((a, b) => {
-    return d3.ascending(a[COUNTRY_COL], b[COUNTRY_COL]) || d3.ascending(a[CATEGORY_COL], b[CATEGORY_COL]) 
+    return d3.ascending(a[COUNTRY_COL], b[COUNTRY_COL]) || d3.ascending(a[CATEGORY_COL], b[CATEGORY_COL])
   });
 
   // Populate Country dropdown
@@ -61,7 +61,7 @@ d3.csv('data/country-programme-results-2019.csv').then(data => {
 let map = d3.choropleth()
   .geofile('lib/d3-geomap/topojson/world/countries.json')
   .column('Initiative Count') // column to represent on heatmap
-  .format(d => d)
+  .format(d => Math.round(d))
   .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
 // Set map click callback to zoomMap
@@ -75,6 +75,7 @@ function drawMap(category = "") {
 
     // Set colors according to category
     map.colors(categoryColors[category] || d3.schemeBlues[9]);
+    map.legend(filters.hasOwnProperty(CATEGORY_COL));
 
     // Draw map
     d3.select('#map').select('svg').remove();
