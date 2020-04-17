@@ -37,7 +37,9 @@
 
   // Import data
   d3.csv('data/country-programme-results-2019.csv').then(data => {
-    dataset = data;
+    dataset = data.sort((a, b) => {
+      return d3.ascending(a['Country'], b['Country']) || d3.ascending(a['Thematic Area Category'], b['Thematic Area Category']) 
+    });
 
     // Populate Country dropdown
     const countries = getDistinctValuesForField(dataset, 'Country');
@@ -105,9 +107,7 @@
   function updateMapFromDropdown(country) {
     if (country) {
       const countrySVGName = (countryTopojsonNames[country] || country).replace(/ /g,"_");
-      console.log(countrySVGName);
       let path = document.querySelector(".unit.unit-" + countrySVGName);
-      console.log(path);
       path.dispatchEvent(new Event("click"));
     } else {
       // TODO: Zoom out of map somehow
