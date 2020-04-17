@@ -1,5 +1,14 @@
 ((() => {
-  const categoryNames = {
+  // Mapping of country names in data to their name in the countries.json file
+  const countryTopojsonNames = {
+    "Bosnia & Herzegovina": "Bosnia and Herzegovina",
+    "C\u00f4te D'Ivoire": "C\u00f4te DIvoire",
+    "Eswatini (Swaziland)": "Eswatini",
+    "S\u00e3o Tom\u00e9 & Principe": "S\u00e3o Tom\u00e9 and Pr\u00edncipe"
+  }
+
+  // Mapping of category names in data to a display name
+  const categoryDisplayNames = {
     "Sexual reproductive health": "Sexual Reproductive Health",
     "GBV": "Gender-based Violence",
     "Youth": "Youth",
@@ -8,6 +17,7 @@
     "Harmful practices": "Harmful Practices"
   }
 
+  // Mapping of category to d3 color scheme
   const categoryColors = {
     "Sexual reproductive health": d3.schemeBlues[9],
     "GBV": d3.schemeGreens[9],
@@ -27,7 +37,7 @@
 
   // Import data
   d3.csv('data/country-programme-results-2019.csv').then(data => {
-    dataset = data
+    dataset = data;
 
     // Populate Country dropdown
     const countries = getDistinctValuesForField(dataset, 'Country');
@@ -35,7 +45,7 @@
 
     // Populate Category dropdown
     const categories = getDistinctValuesForField(dataset, 'Thematic Area Category');
-    populateDropdown(categoryDropdown, categories.sort(), (cat) => categoryNames[cat] || cat);
+    populateDropdown(categoryDropdown, categories.sort(), (cat) => categoryDisplayNames[cat] || cat);
 
     drawMap();
     createTable("#table", dataset);
@@ -84,16 +94,20 @@
 
   // Update dropdown selection when user selects a country on map
   function updateDropdownFromMap(country) {
-    countryDropdown.value = country;
+    const countryDropdownName = getKeyByValue(countryTopojsonNames, country) || country;
+    countryDropdown.value = countryDropdownName;
 
-    filters["Country"] = country;
+    filters["Country"] = countryDropdownName;
     updateTable("#table", dataset, filters);
   }
 
   // Update map selection when user selects a country from dropdown
   function updateMapFromDropdown(country) {
     if (country) {
-      let path = document.querySelector(".unit.unit-" + country)
+      const countrySVGName = (countryTopojsonNames[country] || country).replace(/ /g,"_");
+      console.log(countrySVGName);
+      let path = document.querySelector(".unit.unit-" + countrySVGName);
+      console.log(path);
       path.dispatchEvent(new Event("click"));
     } else {
       // TODO: Zoom out of map somehow
@@ -138,14 +152,14 @@
     if (dataset) {
       const category = categoryDropdown.value;
       const country = countryDropdown.value;
-      const categoryData = getDataForCategory(dataset, category);
+      const categoryData = getDataForCategory(dataset, category, (country) => countryTopojsonNames[country] || country);
 
       // Set colors according to category
       map.colors(categoryColors[category] || d3.schemeBlues[9]);
 
       // Draw map
       d3.select('#map').select('svg').remove();
-      map.draw(d3.select("#map").datum(categoryData));
+      map.draw(d3.select("#map").data([categoryData]));
 
       if (country) {
         updateMapFromDropdown(country);
@@ -163,7 +177,7 @@ function createTable(selector, data) {
     .classed("my-table", true)
 
   // Columns to display
-  let tableHeaders = ["Country", "Thematic Area", "Thematic Area Category"];
+  let tableHeaders = ["Country", "Thematic Area Category", "Thematic Area"];
 
   let header = table
     .append("thead")
@@ -201,7 +215,7 @@ function createTable(selector, data) {
 // Updates table with filters
 function updateTable(selector, data, filters = {}) {
   let table = d3.select(selector);
-  let tableHeaders = ["Country", "Thematic Area", "Thematic Area Category"];
+  let tableHeaders = ["Country", "Thematic Area Category", "Thematic Area"];
 
   // Remove existing rows
   table.select('tbody').selectAll('tr').remove();
@@ -229,6 +243,17 @@ function updateTable(selector, data, filters = {}) {
       document.getElementById('modal-text2').innerHTML = d['Narrative'];
     });
 
+
+  // Hide table if no rows to display
+  let noResultsText = document.querySelector('.no-results-text');
+  if (rows.size() == 0) {
+    table.style("display", "none");
+    noResultsText.style.display = "block";
+  } else {
+    table.style("display", "block");
+    noResultsText.style.display = "none";
+  }
+
   let cells = rows
     .selectAll("td")
     .data(row => {
@@ -244,7 +269,6 @@ function updateTable(selector, data, filters = {}) {
 // ============================ MODAL ============================
 let modal = document.getElementById('initiative-modal');
 let closeModalBtn = document.querySelector('.modal__close-btn');
-let modalBody = document.getElementById('modal_body');
 
 // Close modal when user clicks close button
 closeModalBtn.onclick = () => {
@@ -289,13 +313,13 @@ function populateDropdown(dropdown, options, getDisplayText) {
 }
 
 // Constructs data to use for a heatmap of the given category
-function getDataForCategory(data, category) {
+function getDataForCategory(data, category, getDisplayText) {
   let entriesForCategory = data.filter(entry => entry['Thematic Area Category'].toLowerCase() == category.toLowerCase());
 
   // Array of objects that look like this:
-  // {name: "Bangladesh", Thematic Area Category: "Sexual reproductive health", Category Count: 13}
+  // {name: "Bangladesh", Thematic Area Category: "Sexual reproductive health", Initiative Count: 13}
   let countryCategoryCount = entriesForCategory.reduce((result, entry) => {
-    let country = entry['Country'];
+    const country = getDisplayText ? getDisplayText(entry['Country']) : entry['Country'];
 
     // Add to count if country has aleady been seen
     for (let i = 0; i < result.length; i++) {
@@ -305,9 +329,14 @@ function getDataForCategory(data, category) {
       }
     }
     // Push new object to array if country hasn't been seen yet
-    result.push({ 'name': country, 'Thematic Area Category': category, 'Initiative Count': 1 });
+    result.push({ 'name': country, 'Initiative Count': 1 });
     return result;
   }, []);
 
   return countryCategoryCount;
+}
+
+// Get key from object given a value
+function getKeyByValue(object, value) {
+  return Object.keys(object).find(key => object[key] === value);
 }

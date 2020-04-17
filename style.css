@@ -46,6 +46,7 @@ img {
 
 .vis__right-panel {
   width: 40%;
+  padding-left: 10px;
 }
 
 /* DROPDOWNS */
@@ -137,6 +138,10 @@ img {
 }
 
 /* TABLE */
+.no-results-text {
+  display: none;
+}
+
 .table-holder {
   height: 600px;
   overflow: auto;
