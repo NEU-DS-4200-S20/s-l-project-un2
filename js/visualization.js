@@ -198,7 +198,7 @@ function table(selector, data) {
       .on("click", function (d) {
         modal.style.display = "block";
         document.getElementById('modal-country').innerHTML=d['Country'];
-        document.getElementById('modal-text1').innerHTML=d['Thematic Area']+d['Content Area']+d['Result Type'];
+        document.getElementById('modal-text1').innerHTML=d['Thematic Area']+"&emsp;&emsp;&emsp;"+d['Content Area']+"&emsp;&emsp;&emsp;"+d['Result Type'];
         document.getElementById('modal-text2').innerHTML=d['Narrative'];
       });
 
