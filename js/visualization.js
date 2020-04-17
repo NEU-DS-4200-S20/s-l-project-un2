@@ -11,6 +11,7 @@ const countryTopojsonNames = {
   "Eswatini (Swaziland)": "Eswatini",
   "S\u00e3o Tom\u00e9 & Principe": "S\u00e3o Tom\u00e9 and Pr\u00edncipe"
 }
+const getCountryTopojsonName = (c) => countryTopojsonNames[c] || c;
 
 // Mapping of category names in data to a display name
 const categoryDisplayNames = {
@@ -21,6 +22,7 @@ const categoryDisplayNames = {
   "Population data": "Population Data",
   "Harmful practices": "Harmful Practices"
 }
+const getCategoryDisplayName = (cat) => categoryDisplayNames[cat] || cat;
 
 // Mapping of category to d3 color scheme
 const categoryColors = {
@@ -49,7 +51,7 @@ d3.csv('data/country-programme-results-2019.csv').then(data => {
 
   // Populate Category dropdown
   const categories = getDistinctValuesForField(dataset, CATEGORY_COL);
-  populateDropdown(categoryDropdown, categories.sort(), onChangeCategory, (cat) => categoryDisplayNames[cat] || cat);
+  populateDropdown(categoryDropdown, categories.sort(), onChangeCategory, getCategoryDisplayName);
 
   drawMap();
   createTable("#table", dataset);
@@ -71,7 +73,7 @@ map.clicked = zoomMap
 function drawMap(category = "") {
   if (dataset) {
     const selectedCountry = countryDropdownSelected.getAttribute("value");
-    const categoryData = getDataForCategory(dataset, category, (country) => countryTopojsonNames[country] || country);
+    const categoryData = getDataForCategory(dataset, category, getCountryTopojsonName);
 
     // Set colors according to category
     map.colors(categoryColors[category] || d3.schemeBlues[9]);
@@ -204,7 +206,7 @@ function updateDropdownFromMap(country) {
 // Update map selection when user selects a country from dropdown
 function updateMapFromDropdown(country) {
   if (country) {
-    const countrySVGName = (countryTopojsonNames[country] || country).replace(/ /g, "_");
+    const countrySVGName = getCountryTopojsonName(country).replace(/ /g, "_");
     let path = document.querySelector(".unit.unit-" + countrySVGName);
     if (path) {
       path.dispatchEvent(new Event("click"));
@@ -242,11 +244,7 @@ function createTable(selector, data) {
     .data(data)
     .enter()
     .append("tr")
-    .on("click", function (d) {
-      modal.style.display = "block";
-      document.getElementById('modal-text1').innerHTML = d[COUNTRY_COL] + "            -          " + d['Content Area'];
-      document.getElementById('modal-text2').innerHTML = d['Narrative'];
-    });
+    .on("click", populateModalWithData);
 
   let cells = rows
     .selectAll("td")
@@ -285,11 +283,7 @@ function updateTable(selector, data, filters = {}) {
     .data(data.filter(shouldDisplayRow))
     .enter()
     .append("tr")
-    .on("click", function (d) {
-      modal.style.display = "block";
-      document.getElementById('modal-text1').innerHTML = d[COUNTRY_COL] + "            -          " + d['Content Area'];
-      document.getElementById('modal-text2').innerHTML = d['Narrative'];
-    });
+    .on("click", populateModalWithData);
 
 
   // Hide table if no rows to display
@@ -329,6 +323,16 @@ window.onclick = (event) => {
     modal.style.display = "none";
   }
 };
+
+function populateModalWithData(d) {
+  modal.style.display = "block";
+  document.getElementById('modal-country').innerHTML = d[COUNTRY_COL];
+  document.getElementById('modal-category').innerHTML = getCategoryDisplayName(d[CATEGORY_COL]);
+  document.getElementById('modal-thematic-area').innerHTML = d['Thematic Area'];
+  document.getElementById('modal-content-area').innerHTML = d['Content Area'];
+  document.getElementById('modal-result-type').innerHTML = d['Result Type'];
+  document.getElementById('modal-narrative').innerHTML = d['Narrative'] + d['Narrative'] + d['Narrative'];
+}
 
 // ============================ UTILITIES ============================
 

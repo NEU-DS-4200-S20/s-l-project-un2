@@ -46,8 +46,7 @@
   <body>
     <!-- Update this with your GitHub repo URL -->
     <span id="forkongithub"
-      ><a
-        href="https://github.com/NEU-DS-4200-S20/s-l-project-un2"
+      ><a href="https://github.com/NEU-DS-4200-S20/s-l-project-un2"
         >Fork me on GitHub</a
       ></span
     >
@@ -108,9 +107,7 @@
 
         <div class="vis__right-panel">
           <!--Category dropdown-->
-          <label for="category-dropdown" class="dropdown-label"
-            >Category</label
-          >
+          <label for="category-dropdown" class="dropdown-label">Category</label>
           <ul id="category-dropdown" class="dropdown">
             <li
               role="button"
@@ -146,9 +143,7 @@
           </ul>
 
           <!--Country dropdown-->
-          <label for="country-dropdown" class="dropdown-label"
-            >Country</label
-          >
+          <label for="country-dropdown" class="dropdown-label">Country</label>
           <ul id="country-dropdown" class="dropdown">
             <li
               role="button"
@@ -192,24 +187,36 @@
     <!--Initiative Detail Modal-->
     <div id="initiative-modal" class="modal">
       <div class="modal__content">
-        <div id="modal-header">
+        <div class="modal-header">
+          <p class="modal-label">Initiative Details</p>
           <button
             class="modal__close-btn"
             aria-label="Close intiative details modal"
           >
             &times;
           </button>
-          <h1><i>Initiative Result</i></h1>
         </div>
-        <div id="modal_body">
-          <p id="modal-text1" style="font-size: 26px;" ;>
-            Country & Content Category
-          </p>
-          <!--Placeholder for text-->
-          <p id="modal-text2" style="font-size: 20px;" ;>Narrative</p>
-          <!--Placeholder for text-->
+        <div id="modal-body">
+          <h3 id="modal-country" class="modal-body__title">Country</h3>
+          <h4 id="modal-category" class="modal-body__subtitle">Category</h4>
+          <div class="modal-body__row">
+            <div class="modal-body__row-item">
+              <p class="modal-body__label">Thematic Area</p>
+              <p id="modal-thematic-area">Thematic Area</p>
+            </div>
+
+            <div class="modal-body__row-item">
+              <p class="modal-body__label">Content Area</p>
+              <p id="modal-content-area">Content Area</p>
+            </div>
+            <div class="modal-body__row-item">
+              <p class="modal-body__label">Result Type</p>
+              <p id="modal-result-type">Result Type</p>
+            </div>
+          </div>
+          <p class="modal-body__label">Narrative</p>
+          <p id="modal-narrative">Narrative</p>
         </div>
-        <div id="modal-footer"></div>
       </div>
     </div>
 

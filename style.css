@@ -84,7 +84,7 @@ img {
   position: absolute;
   right: 10px;
   top: 50%;
-  z-index: 3;
+  z-index: 2;
 }
 
 .dropdown__arrow.expanded {
@@ -120,7 +120,7 @@ img {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  z-index: 4;
+  z-index: 3;
 }
 
 .dropdown ul {
@@ -187,10 +187,10 @@ td {
 /* MODAL */
 
 .modal {
+  font-family: "Libre Franklin", Arial, Helvetica, sans-serif;
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  z-index: 100; /* Sit on top */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -200,26 +200,70 @@ td {
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
-.modal__content {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
 }
 
-.close {
+.modal-label {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: grey;
+}
+
+.modal__content {
+  background-color: #fefefe;
+  width: 80%;
+  max-height: calc(100vh - 200px);
+  max-width: 800px;
+  overflow: auto;
+  margin: 100px auto;
+  padding: 30px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.modal-body__title {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.modal-body__subtitle {
+  font-size: 24px;
+  color: grey;
+  margin-top: 0;
+}
+
+.modal-body__row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-body__row-item {
+  max-width: 300px;
+}
+
+.modal-body__label {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.modal__close-btn {
+  background: none;
+  border: none;
   color: #aaaaaa;
-  float: right;
   font-size: 28px;
   font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
+.modal__close-btn:hover,
+.modal__close-btn:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
+  outline: 0;
 }
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
