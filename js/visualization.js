@@ -331,7 +331,7 @@ function populateModalWithData(d) {
   document.getElementById('modal-thematic-area').innerHTML = d['Thematic Area'];
   document.getElementById('modal-content-area').innerHTML = d['Content Area'];
   document.getElementById('modal-result-type').innerHTML = d['Result Type'];
-  document.getElementById('modal-narrative').innerHTML = d['Narrative'] + d['Narrative'] + d['Narrative'];
+  document.getElementById('modal-narrative').innerHTML = d['Narrative'];
 }
 
 // ============================ UTILITIES ============================
