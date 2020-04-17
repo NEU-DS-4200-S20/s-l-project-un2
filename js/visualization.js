@@ -35,7 +35,9 @@ let dataset;
 let filters = {};
 
 d3.csv('data/country-programme-results-2019.csv').then(data => {
-  dataset = data;
+  dataset = data.sort((a, b) => {
+    return d3.ascending(a['Country'], b['Country']) || d3.ascending(a['Thematic Area Category'], b['Thematic Area Category']) 
+  });
 
   // Populate Country dropdown
   const countries = getDistinctValuesForField(dataset, 'Country');
