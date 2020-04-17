@@ -153,7 +153,7 @@ img {
 }
 
 .table-holder {
-  height: 600px;
+  height: 500px;
   overflow: auto;
   background-color: white;
   border-radius: 10px;
@@ -203,6 +203,7 @@ td {
 .modal-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .modal-label {
