@@ -107,29 +107,18 @@
         </div>
 
         <div class="vis__right-panel">
-          <!--Dropdown menus-->
-          <label for="category-dropdown" class="vis__dropdown-label"
+          <!--Category dropdown-->
+          <label for="category-dropdown" class="dropdown-label"
             >Category</label
           >
-          <select id="category-dropdown" class="vis__dropdown">
-            <option value="">Select a category</option>
-          </select>
-
-          <label for="country-dropdown" class="vis__dropdown-label"
-            >Country</label
-          >
-          <select id="country-dropdown" class="vis__dropdown">
-            <option value="">Select a country</option>
-          </select>
-
-          <ul class="dropdown">
+          <ul id="category-dropdown" class="dropdown">
             <li
               role="button"
               aria-labelledby="dropdown-label"
-              id="dropdown__selected"
+              class="dropdown__selected"
               tabindex="0"
             >
-              <span>Select a category...</span>
+              Select a category...
             </li>
 
             <svg
@@ -149,11 +138,46 @@
               class="dropdown__list-container"
             >
               <ul class="dropdown__list">
-                <li class="dropdown__list-item" tabindex="0" id="option-1">
+                <li class="dropdown__list-item">
                   Select a category...
                 </li>
-                <li class="dropdown__list-item" tabindex="0" id="option-2">
-                  Option 2 is really longgggggggggggggggg
+              </ul>
+            </li>
+          </ul>
+
+          <!--Country dropdown-->
+          <label for="country-dropdown" class="dropdown-label"
+            >Country</label
+          >
+          <ul id="country-dropdown" class="dropdown">
+            <li
+              role="button"
+              aria-labelledby="dropdown-label"
+              class="dropdown__selected"
+              tabindex="0"
+            >
+              Select a country...
+            </li>
+
+            <svg
+              class="dropdown__arrow"
+              width="10"
+              height="5"
+              viewBox="0 0 10 5"
+              fill-rule="evenodd"
+            >
+              <title>Open dropdown</title>
+              <path d="M10 0L5 5 0 0z"></path>
+            </svg>
+
+            <li
+              aria-expanded="false"
+              role="list"
+              class="dropdown__list-container"
+            >
+              <ul class="dropdown__list">
+                <li class="dropdown__list-item">
+                  Select a country...
                 </li>
               </ul>
             </li>

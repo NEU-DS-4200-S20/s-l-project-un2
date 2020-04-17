@@ -1,174 +1,215 @@
-((() => {
-  // Mapping of country names in data to their name in the countries.json file
-  const countryTopojsonNames = {
-    "Bosnia & Herzegovina": "Bosnia and Herzegovina",
-    "C\u00f4te D'Ivoire": "C\u00f4te DIvoire",
-    "Eswatini (Swaziland)": "Eswatini",
-    "S\u00e3o Tom\u00e9 & Principe": "S\u00e3o Tom\u00e9 and Pr\u00edncipe"
-  }
+// ============================ DATA MAPPINGS ============================
 
-  // Mapping of category names in data to a display name
-  const categoryDisplayNames = {
-    "Sexual reproductive health": "Sexual Reproductive Health",
-    "GBV": "Gender-based Violence",
-    "Youth": "Youth",
-    "OEE": "Organizational Effectiveness and Efficiency",
-    "Population data": "Population Data",
-    "Harmful practices": "Harmful Practices"
-  }
+// Mapping of country names in data to their name in the countries.json file
+const countryTopojsonNames = {
+  "Bosnia & Herzegovina": "Bosnia and Herzegovina",
+  "C\u00f4te D'Ivoire": "C\u00f4te DIvoire",
+  "Eswatini (Swaziland)": "Eswatini",
+  "S\u00e3o Tom\u00e9 & Principe": "S\u00e3o Tom\u00e9 and Pr\u00edncipe"
+}
 
-  // Mapping of category to d3 color scheme
-  const categoryColors = {
-    "Sexual reproductive health": d3.schemeBlues[9],
-    "GBV": d3.schemeGreens[9],
-    "Youth": d3.schemeOranges[9],
-    "OEE": d3.schemePurples[9],
-    "Population data": d3.schemeReds[9],
-    "Harmful practices": d3.schemeBuGn[9]
-  }
+// Mapping of category names in data to a display name
+const categoryDisplayNames = {
+  "Sexual reproductive health": "Sexual Reproductive Health",
+  "GBV": "Gender-based Violence",
+  "Youth": "Youth",
+  "OEE": "Organizational Effectiveness and Efficiency",
+  "Population data": "Population Data",
+  "Harmful practices": "Harmful Practices"
+}
 
-  // Initialize values
-  let dataset;
-  let filters = {};
+// Mapping of category to d3 color scheme
+const categoryColors = {
+  "Sexual reproductive health": d3.schemeBlues[9],
+  "GBV": d3.schemeGreens[9],
+  "Youth": d3.schemeOranges[9],
+  "OEE": d3.schemePurples[9],
+  "Population data": d3.schemeReds[9],
+  "Harmful practices": d3.schemeBuGn[9]
+}
 
-  // Initialize dropdown filters
-  const countryDropdown = document.querySelector('#country-dropdown');
-  const categoryDropdown = document.querySelector('#category-dropdown');
+// ============================ IMPORT DATA ============================
 
-  // Import data
-  d3.csv('data/country-programme-results-2019.csv').then(data => {
-    dataset = data;
+// Initialize values
+let dataset;
+let filters = {};
 
-    // Populate Country dropdown
-    const countries = getDistinctValuesForField(dataset, 'Country');
-    populateDropdown(countryDropdown, countries.sort());
+d3.csv('data/country-programme-results-2019.csv').then(data => {
+  dataset = data;
 
-    // Populate Category dropdown
-    const categories = getDistinctValuesForField(dataset, 'Thematic Area Category');
-    populateDropdown(categoryDropdown, categories.sort(), (cat) => categoryDisplayNames[cat] || cat);
+  // Populate Country dropdown
+  const countries = getDistinctValuesForField(dataset, 'Country');
+  populateDropdown(countryDropdown, countries.sort(), onChangeCountry);
 
-    drawMap();
-    createTable("#table", dataset);
-  });
+  // Populate Category dropdown
+  const categories = getDistinctValuesForField(dataset, 'Thematic Area Category');
+  populateDropdown(categoryDropdown, categories.sort(), onChangeCategory, (cat) => categoryDisplayNames[cat] || cat);
 
-  // Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
-  let map = d3.choropleth()
-    .geofile('lib/d3-geomap/topojson/world/countries.json')
-    .column('Initiative Count') // column to represent on heatmap
-    .format(d => d)
-    .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
+  drawMap();
+  createTable("#table", dataset);
+});
 
-  // Link dropdowns to map
-  let dispatch = d3.dispatch("map-changed");
-  dispatch.on("map-changed", updateDropdownFromMap);
-  countryDropdown.addEventListener("change", onChangeCountry);
-  categoryDropdown.addEventListener("change", onChangeCategory);
+// ============================ MAP ============================
 
-  // Update table and map when category changes
-  function onChangeCategory() {
-    const category = categoryDropdown.value;
+// Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
+let map = d3.choropleth()
+  .geofile('lib/d3-geomap/topojson/world/countries.json')
+  .column('Initiative Count') // column to represent on heatmap
+  .format(d => d)
+  .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
-    if (category) {
-      filters["Thematic Area Category"] = categoryDropdown.value;
-    } else {
-      delete filters["Thematic Area Category"];
+// Set map click callback to zoomMap
+map.clicked = zoomMap
+
+// Draws map 
+function drawMap(category = "") {
+  if (dataset) {
+    const selectedCountry = countryDropdownSelected.getAttribute("value");
+    const categoryData = getDataForCategory(dataset, category, (country) => countryTopojsonNames[country] || country);
+
+    // Set colors according to category
+    map.colors(categoryColors[category] || d3.schemeBlues[9]);
+
+    // Draw map
+    d3.select('#map').select('svg').remove();
+    map.draw(d3.select("#map").data([categoryData]));
+
+    if (selectedCountry) {
+      updateMapFromDropdown(selectedCountry);
     }
+  }
+}
 
-    updateTable("#table", dataset, filters);
-    drawMap();
+// Zooms into map
+function zoomMap(d) {
+  // Tell dispatch that map changed
+  dispatch.call("map-changed", {}, d.properties.name)
+
+  // Original zooming implementation from d3-geomap libary 
+  let k = 1,
+    x0 = this.properties.width / 2,
+    y0 = this.properties.height / 2,
+    x = x0,
+    y = y0;
+
+  if (d && d.hasOwnProperty('geometry') && this._.centered !== d) {
+    let centroid = this.path.centroid(d);
+    x = centroid[0];
+    y = centroid[1];
+    k = this.properties.zoomFactor;
+    this._.centered = d;
+  } else {
+    this._.centered = null;
   }
 
-  // Update table and map when country changes
-  function onChangeCountry() {
-    const country = countryDropdown.value;
+  this.svg.selectAll('path.unit')
+    .classed('active', this._.centered && ((_) => _ === this._.centered));
 
-    if (country) {
-      filters["Country"] = country;
-    } else {
-      delete filters["Country"];
-    }
+  this.svg.selectAll('g.zoom')
+    .transition()
+    .duration(750)
+    .attr('transform', `translate(${x0}, ${y0})scale(${k})translate(-${x}, -${y})`);
+}
 
-    updateTable("#table", dataset, filters);
-    updateMapFromDropdown(country);
+// ============================ DROPDOWNS ============================
+
+const countryDropdown = document.querySelector('#country-dropdown .dropdown__list');
+const countryDropdownSelected = document.querySelector(
+  "#country-dropdown .dropdown__selected"
+);
+
+const categoryDropdown = document.querySelector('#category-dropdown .dropdown__list');
+const categoryDropdownSelected = document.querySelector(
+  "#category-dropdown .dropdown__selected"
+);
+
+// Link dropdowns to map
+let dispatch = d3.dispatch("map-changed");
+dispatch.on("map-changed", updateDropdownFromMap);
+
+// Populates given dropdown with given option values
+function populateDropdown(dropdown, options, onOptionClick, getDisplayText) {
+  const onDropdownItemClick = (e) => {
+    onOptionClick(e);
+    setSelectedListItem(e);
+    closeList(e);
   }
 
-  // Update dropdown selection when user selects a country on map
-  function updateDropdownFromMap(country) {
-    const countryDropdownName = getKeyByValue(countryTopojsonNames, country) || country;
-    countryDropdown.value = countryDropdownName;
+  // Add event listener to default option
+  const defaultOption = dropdown.querySelector('.dropdown__list-item');
+  defaultOption.addEventListener("click", onDropdownItemClick);
 
-    filters["Country"] = countryDropdownName;
-    updateTable("#table", dataset, filters);
+  // Populate dropdown options
+  options.forEach(option => {
+    const displayText = document.createTextNode(getDisplayText ? getDisplayText(option) : option);
+
+    let li = document.createElement("li");
+    li.appendChild(displayText);
+    li.setAttribute("value", option);
+    li.classList.add("dropdown__list-item");
+    li.addEventListener("click", onDropdownItemClick);
+
+    dropdown.appendChild(li);
+  })
+}
+
+// Update table and map when category changes
+function onChangeCategory(e) {
+  const category = e.target.getAttribute("value");
+
+  if (category) {
+    filters["Thematic Area Category"] = category;
+  } else {
+    delete filters["Thematic Area Category"];
   }
 
-  // Update map selection when user selects a country from dropdown
-  function updateMapFromDropdown(country) {
-    if (country) {
-      const countrySVGName = (countryTopojsonNames[country] || country).replace(/ /g,"_");
-      console.log(countrySVGName);
-      let path = document.querySelector(".unit.unit-" + countrySVGName);
-      console.log(path);
+  updateTable("#table", dataset, filters);
+  drawMap(category);
+}
+
+// Update table and map when country changes
+function onChangeCountry(e) {
+  const country = e.target.getAttribute("value");
+
+  if (country) {
+    filters["Country"] = country;
+  } else {
+    delete filters["Country"];
+  }
+
+  updateTable("#table", dataset, filters);
+  updateMapFromDropdown(country);
+}
+
+// Update dropdown selection when user selects a country on map
+function updateDropdownFromMap(country) {
+  const countryDropdownName = getKeyByValue(countryTopojsonNames, country) || country;
+
+  let selectedTextToAppend = document.createTextNode(countryDropdownName);
+  countryDropdownSelected.innerHTML = null;
+  countryDropdownSelected.setAttribute("value", countryDropdownName);
+  countryDropdownSelected.appendChild(selectedTextToAppend);
+
+  filters["Country"] = countryDropdownName;
+  updateTable("#table", dataset, filters);
+}
+
+// Update map selection when user selects a country from dropdown
+function updateMapFromDropdown(country) {
+  if (country) {
+    const countrySVGName = (countryTopojsonNames[country] || country).replace(/ /g, "_");
+    let path = document.querySelector(".unit.unit-" + countrySVGName);
+    if (path) {
       path.dispatchEvent(new Event("click"));
-    } else {
-      // TODO: Zoom out of map somehow
     }
+  } else {
+    // TODO: Zoom out of map somehow
   }
-
-  // Set map click callback to zoomMap
-  map.clicked = zoomMap
-
-  function zoomMap(d) {
-    // Tell dispatch that map changed
-    dispatch.call("map-changed", {}, d.properties.name)
-
-    // Original zooming implementation from d3-geomap libary 
-    let k = 1,
-      x0 = this.properties.width / 2,
-      y0 = this.properties.height / 2,
-      x = x0,
-      y = y0;
-
-    if (d && d.hasOwnProperty('geometry') && this._.centered !== d) {
-      let centroid = this.path.centroid(d);
-      x = centroid[0];
-      y = centroid[1];
-      k = this.properties.zoomFactor;
-      this._.centered = d;
-    } else {
-      this._.centered = null;
-    }
-
-    this.svg.selectAll('path.unit')
-      .classed('active', this._.centered && ((_) => _ === this._.centered));
-
-    this.svg.selectAll('g.zoom')
-      .transition()
-      .duration(750)
-      .attr('transform', `translate(${x0}, ${y0})scale(${k})translate(-${x}, -${y})`);
-  }
-
-  // Draws map 
-  function drawMap() {
-    if (dataset) {
-      const category = categoryDropdown.value;
-      const country = countryDropdown.value;
-      const categoryData = getDataForCategory(dataset, category, (country) => countryTopojsonNames[country] || country);
-
-      // Set colors according to category
-      map.colors(categoryColors[category] || d3.schemeBlues[9]);
-
-      // Draw map
-      d3.select('#map').select('svg').remove();
-      map.draw(d3.select("#map").data([categoryData]));
-
-      if (country) {
-        updateMapFromDropdown(country);
-      }
-    }
-  }
-})());
+}
 
 // ============================ TABLE ============================
+
+const noResultsText = document.querySelector('.no-results-text');
 
 // Creates table
 function createTable(selector, data) {
@@ -245,7 +286,6 @@ function updateTable(selector, data, filters = {}) {
 
 
   // Hide table if no rows to display
-  let noResultsText = document.querySelector('.no-results-text');
   if (rows.size() == 0) {
     table.style("display", "none");
     noResultsText.style.display = "block";
@@ -267,8 +307,9 @@ function updateTable(selector, data, filters = {}) {
 }
 
 // ============================ MODAL ============================
-let modal = document.getElementById('initiative-modal');
-let closeModalBtn = document.querySelector('.modal__close-btn');
+
+const modal = document.getElementById('initiative-modal');
+const closeModalBtn = document.querySelector('.modal__close-btn');
 
 // Close modal when user clicks close button
 closeModalBtn.onclick = () => {
@@ -301,19 +342,12 @@ function getDistinctValuesForField(data, field) {
   return Object.keys(distinctValues);
 }
 
-// Populates given dropdown with given option values
-function populateDropdown(dropdown, options, getDisplayText) {
-  options.forEach(option => {
-    let el = document.createElement("option");
-    el.text = getDisplayText ? getDisplayText(option) : option;
-    el.value = option;
-
-    dropdown.add(el);
-  })
-}
-
 // Constructs data to use for a heatmap of the given category
 function getDataForCategory(data, category, getDisplayText) {
+  if (!category) {
+    return [];
+  }
+
   let entriesForCategory = data.filter(entry => entry['Thematic Area Category'].toLowerCase() == category.toLowerCase());
 
   // Array of objects that look like this:
