@@ -1,3 +1,7 @@
+// ============================ GLOBAL CONSTANTS ============================
+const COUNTRY_COL = 'Country';
+const CATEGORY_COL = 'Thematic Area Category';
+
 // ============================ DATA MAPPINGS ============================
 
 // Mapping of country names in data to their name in the countries.json file
@@ -36,15 +40,15 @@ let filters = {};
 
 d3.csv('data/country-programme-results-2019.csv').then(data => {
   dataset = data.sort((a, b) => {
-    return d3.ascending(a['Country'], b['Country']) || d3.ascending(a['Thematic Area Category'], b['Thematic Area Category']) 
+    return d3.ascending(a[COUNTRY_COL], b[COUNTRY_COL]) || d3.ascending(a[CATEGORY_COL], b[CATEGORY_COL]) 
   });
 
   // Populate Country dropdown
-  const countries = getDistinctValuesForField(dataset, 'Country');
+  const countries = getDistinctValuesForField(dataset, COUNTRY_COL);
   populateDropdown(countryDropdown, countries.sort(), onChangeCountry);
 
   // Populate Category dropdown
-  const categories = getDistinctValuesForField(dataset, 'Thematic Area Category');
+  const categories = getDistinctValuesForField(dataset, CATEGORY_COL);
   populateDropdown(categoryDropdown, categories.sort(), onChangeCategory, (cat) => categoryDisplayNames[cat] || cat);
 
   drawMap();
@@ -160,9 +164,9 @@ function onChangeCategory(e) {
   const category = e.target.getAttribute("value");
 
   if (category) {
-    filters["Thematic Area Category"] = category;
+    filters[CATEGORY_COL] = category;
   } else {
-    delete filters["Thematic Area Category"];
+    delete filters[CATEGORY_COL];
   }
 
   updateTable("#table", dataset, filters);
@@ -174,9 +178,9 @@ function onChangeCountry(e) {
   const country = e.target.getAttribute("value");
 
   if (country) {
-    filters["Country"] = country;
+    filters[COUNTRY_COL] = country;
   } else {
-    delete filters["Country"];
+    delete filters[COUNTRY_COL];
   }
 
   updateTable("#table", dataset, filters);
@@ -192,7 +196,7 @@ function updateDropdownFromMap(country) {
   countryDropdownSelected.setAttribute("value", countryDropdownName);
   countryDropdownSelected.appendChild(selectedTextToAppend);
 
-  filters["Country"] = countryDropdownName;
+  filters[COUNTRY_COL] = countryDropdownName;
   updateTable("#table", dataset, filters);
 }
 
@@ -220,7 +224,7 @@ function createTable(selector, data) {
     .classed("my-table", true)
 
   // Columns to display
-  let tableHeaders = ["Country", "Thematic Area Category", "Thematic Area"];
+  let tableHeaders = [COUNTRY_COL, CATEGORY_COL, "Thematic Area"];
 
   let header = table
     .append("thead")
@@ -239,7 +243,7 @@ function createTable(selector, data) {
     .append("tr")
     .on("click", function (d) {
       modal.style.display = "block";
-      document.getElementById('modal-text1').innerHTML = d['Country'] + "            -          " + d['Content Area'];
+      document.getElementById('modal-text1').innerHTML = d[COUNTRY_COL] + "            -          " + d['Content Area'];
       document.getElementById('modal-text2').innerHTML = d['Narrative'];
     });
 
@@ -258,7 +262,7 @@ function createTable(selector, data) {
 // Updates table with filters
 function updateTable(selector, data, filters = {}) {
   let table = d3.select(selector);
-  let tableHeaders = ["Country", "Thematic Area Category", "Thematic Area"];
+  let tableHeaders = [COUNTRY_COL, CATEGORY_COL, "Thematic Area"];
 
   // Remove existing rows
   table.select('tbody').selectAll('tr').remove();
@@ -282,7 +286,7 @@ function updateTable(selector, data, filters = {}) {
     .append("tr")
     .on("click", function (d) {
       modal.style.display = "block";
-      document.getElementById('modal-text1').innerHTML = d['Country'] + "            -          " + d['Content Area'];
+      document.getElementById('modal-text1').innerHTML = d[COUNTRY_COL] + "            -          " + d['Content Area'];
       document.getElementById('modal-text2').innerHTML = d['Narrative'];
     });
 
@@ -350,12 +354,12 @@ function getDataForCategory(data, category, getDisplayText) {
     return [];
   }
 
-  let entriesForCategory = data.filter(entry => entry['Thematic Area Category'].toLowerCase() == category.toLowerCase());
+  let entriesForCategory = data.filter(entry => entry[CATEGORY_COL].toLowerCase() == category.toLowerCase());
 
   // Array of objects that look like this:
   // {name: "Bangladesh", Thematic Area Category: "Sexual reproductive health", Initiative Count: 13}
   let countryCategoryCount = entriesForCategory.reduce((result, entry) => {
-    const country = getDisplayText ? getDisplayText(entry['Country']) : entry['Country'];
+    const country = getDisplayText ? getDisplayText(entry[COUNTRY_COL]) : entry[COUNTRY_COL];
 
     // Add to count if country has aleady been seen
     for (let i = 0; i < result.length; i++) {
