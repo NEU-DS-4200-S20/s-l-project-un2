@@ -57,7 +57,7 @@
   let map = d3.choropleth()
     .geofile('lib/d3-geomap/topojson/world/countries.json')
     .column('Initiative Count') // column to represent on heatmap
-    .format(d => d)
+    .format(d => Math.round(d))
     .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
 
   // Link dropdowns to map
@@ -156,6 +156,7 @@
 
       // Set colors according to category
       map.colors(categoryColors[category] || d3.schemeBlues[9]);
+      map.legend(category != '');
 
       // Draw map
       d3.select('#map').select('svg').remove();
