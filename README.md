@@ -2,11 +2,11 @@
 
 ## DS 4200 S20, Team UN2
 
-### [Project Site](https://neu-ds-4200-s20.github.io/s-l-project-un2/) - documents the motivation behind our project, our design process, and includes a video demo
-
-### [Visualization](https://neu-ds-4200-s20.github.io/s-l-project-un2/visualization.html) - the final visualization built with [d3](https://d3js.org/)
-
 The UNFPA Global Learning Map is an interactive visualization that educates users on 2019 UNFPA initiatives by each member country. It was created by [Caitlin Wang](https://github.com/ctlnwng), [Drefnie R. Limprevil](https://github.com/drefnie), [Emily Colladay](https://github.com/ecolladay), and [Garret Kutzko](https://github.com/ktzktv) in partnership with [UNFPA](https://www.unfpa.org/).
+
+### Click [here](https://neu-ds-4200-s20.github.io/s-l-project-un2/visualization.html) to see the visualization
+
+Or visit the [project site](https://neu-ds-4200-s20.github.io/s-l-project-un2/) which documents the motivation behind our project, our design process, and includes a video demo
 
 ## 🛠 Setup
 
