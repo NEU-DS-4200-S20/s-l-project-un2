@@ -6,33 +6,33 @@ const CATEGORY_COL = 'Thematic Area Category';
 
 // Mapping of country names in data to their name in the countries.json file
 const countryTopojsonNames = {
-  "Bosnia & Herzegovina": "Bosnia and Herzegovina",
-  "C\u00f4te D'Ivoire": "C\u00f4te DIvoire",
-  "Eswatini (Swaziland)": "Eswatini",
-  "S\u00e3o Tom\u00e9 & Principe": "S\u00e3o Tom\u00e9 and Pr\u00edncipe"
-}
+  'Bosnia & Herzegovina': 'Bosnia and Herzegovina',
+  "C\u00f4te D'Ivoire": 'C\u00f4te DIvoire',
+  'Eswatini (Swaziland)': 'Eswatini',
+  'S\u00e3o Tom\u00e9 & Principe': 'S\u00e3o Tom\u00e9 and Pr\u00edncipe',
+};
 const getCountryTopojsonName = (c) => countryTopojsonNames[c] || c;
 
 // Mapping of category names in data to a display name
 const categoryDisplayNames = {
-  "Sexual reproductive health": "Sexual Reproductive Health",
-  "GBV": "Gender-based Violence",
-  "Youth": "Youth",
-  "OEE": "Organizational Effectiveness and Efficiency",
-  "Population data": "Population Data",
-  "Harmful practices": "Harmful Practices"
-}
+  'Sexual reproductive health': 'Sexual Reproductive Health',
+  GBV: 'Gender-based Violence',
+  Youth: 'Youth',
+  OEE: 'Organizational Effectiveness and Efficiency',
+  'Population data': 'Population Data',
+  'Harmful practices': 'Harmful Practices',
+};
 const getCategoryDisplayName = (cat) => categoryDisplayNames[cat] || cat;
 
 // Mapping of category to d3 color scheme
 const categoryColors = {
-  "Sexual reproductive health": d3.schemeBlues[9],
-  "GBV": d3.schemeGreens[9],
-  "Youth": d3.schemeOranges[9],
-  "OEE": d3.schemePurples[9],
-  "Population data": d3.schemeReds[9],
-  "Harmful practices": d3.schemeBuGn[9]
-}
+  'Sexual reproductive health': d3.schemeBlues[9],
+  GBV: d3.schemeGreens[9],
+  Youth: d3.schemeOranges[9],
+  OEE: d3.schemePurples[9],
+  'Population data': d3.schemeReds[9],
+  'Harmful practices': d3.schemeBuGn[9],
+};
 
 // ============================ IMPORT DATA ============================
 
@@ -40,9 +40,12 @@ const categoryColors = {
 let dataset;
 let filters = {};
 
-d3.csv('data/country-programme-results-2019.csv').then(data => {
+d3.csv('data/country-programme-results-2019.csv').then((data) => {
   dataset = data.sort((a, b) => {
-    return d3.ascending(a[COUNTRY_COL], b[COUNTRY_COL]) || d3.ascending(a[CATEGORY_COL], b[CATEGORY_COL])
+    return (
+      d3.ascending(a[COUNTRY_COL], b[COUNTRY_COL]) ||
+      d3.ascending(a[CATEGORY_COL], b[CATEGORY_COL])
+    );
   });
 
   // Populate Country dropdown
@@ -51,29 +54,39 @@ d3.csv('data/country-programme-results-2019.csv').then(data => {
 
   // Populate Category dropdown
   const categories = getDistinctValuesForField(dataset, CATEGORY_COL);
-  populateDropdown(categoryDropdown, categories.sort(), onChangeCategory, getCategoryDisplayName);
+  populateDropdown(
+    categoryDropdown,
+    categories.sort(),
+    onChangeCategory,
+    getCategoryDisplayName
+  );
 
   drawMap();
-  createTable("#table", dataset);
+  createTable('#table', dataset);
 });
 
 // ============================ MAP ============================
 
-// Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/ 
-let map = d3.choropleth()
+// Initialize choropleth map https://d3-geomap.github.io/map/choropleth/world/
+let map = d3
+  .choropleth()
   .geofile('lib/d3-geomap/topojson/world/countries.json')
   .column('Initiative Count') // column to represent on heatmap
-  .format(d => Math.round(d))
-  .unitId('name'); // column that identifies each country (must match the property name in countries.json) 
+  .format((d) => Math.round(d))
+  .unitId('name'); // column that identifies each country (must match the property name in countries.json)
 
 // Set map click callback to zoomMap
-map.clicked = zoomMap
+map.clicked = zoomMap;
 
-// Draws map 
-function drawMap(category = "") {
+// Draws map
+function drawMap(category = '') {
   if (dataset) {
-    const selectedCountry = countryDropdownSelected.getAttribute("value");
-    const categoryData = getDataForCategory(dataset, category, getCountryTopojsonName);
+    const selectedCountry = countryDropdownSelected.getAttribute('value');
+    const categoryData = getDataForCategory(
+      dataset,
+      category,
+      getCountryTopojsonName
+    );
 
     // Set colors according to category
     map.colors(categoryColors[category] || d3.schemeBlues[9]);
@@ -81,7 +94,7 @@ function drawMap(category = "") {
 
     // Draw map
     d3.select('#map').select('svg').remove();
-    map.draw(d3.select("#map").data([categoryData]));
+    map.draw(d3.select('#map').data([categoryData]));
 
     if (selectedCountry) {
       updateMapFromDropdown(selectedCountry);
@@ -92,9 +105,9 @@ function drawMap(category = "") {
 // Zooms into map
 function zoomMap(d) {
   //Update the dropdown in response to the map
-  updateDropdownFromMap(d.properties.name)
+  updateDropdownFromMap(d.properties.name);
 
-  // Original zooming implementation from d3-geomap libary 
+  // Original zooming implementation from d3-geomap libary
   let k = 1,
     x0 = this.properties.width / 2,
     y0 = this.properties.height / 2,
@@ -111,25 +124,34 @@ function zoomMap(d) {
     this._.centered = null;
   }
 
-  this.svg.selectAll('path.unit')
+  this.svg
+    .selectAll('path.unit')
     .classed('active', this._.centered && ((_) => _ === this._.centered));
 
-  this.svg.selectAll('g.zoom')
+  this.svg
+    .selectAll('g.zoom')
     .transition()
     .duration(750)
-    .attr('transform', `translate(${x0}, ${y0})scale(${k})translate(-${x}, -${y})`);
+    .attr(
+      'transform',
+      `translate(${x0}, ${y0})scale(${k})translate(-${x}, -${y})`
+    );
 }
 
 // ============================ DROPDOWNS ============================
 
-const countryDropdown = document.querySelector('#country-dropdown .dropdown__list');
+const countryDropdown = document.querySelector(
+  '#country-dropdown .dropdown__list'
+);
 const countryDropdownSelected = document.querySelector(
-  "#country-dropdown .dropdown__selected"
+  '#country-dropdown .dropdown__selected'
 );
 
-const categoryDropdown = document.querySelector('#category-dropdown .dropdown__list');
+const categoryDropdown = document.querySelector(
+  '#category-dropdown .dropdown__list'
+);
 const categoryDropdownSelected = document.querySelector(
-  "#category-dropdown .dropdown__selected"
+  '#category-dropdown .dropdown__selected'
 );
 
 // Populates given dropdown with given option values
@@ -138,29 +160,31 @@ function populateDropdown(dropdown, options, onOptionClick, getDisplayText) {
     onOptionClick(e);
     setSelectedListItem(e);
     closeList(e);
-  }
+  };
 
   // Add event listener to default option
   const defaultOption = dropdown.querySelector('.dropdown__list-item');
-  defaultOption.addEventListener("click", onDropdownItemClick);
+  defaultOption.addEventListener('click', onDropdownItemClick);
 
   // Populate dropdown options
-  options.forEach(option => {
-    const displayText = document.createTextNode(getDisplayText ? getDisplayText(option) : option);
+  options.forEach((option) => {
+    const displayText = document.createTextNode(
+      getDisplayText ? getDisplayText(option) : option
+    );
 
-    let li = document.createElement("li");
+    let li = document.createElement('li');
     li.appendChild(displayText);
-    li.setAttribute("value", option);
-    li.classList.add("dropdown__list-item");
-    li.addEventListener("click", onDropdownItemClick);
+    li.setAttribute('value', option);
+    li.classList.add('dropdown__list-item');
+    li.addEventListener('click', onDropdownItemClick);
 
     dropdown.appendChild(li);
-  })
+  });
 }
 
 // Update table and map when category changes
 function onChangeCategory(e) {
-  const category = e.target.getAttribute("value");
+  const category = e.target.getAttribute('value');
 
   if (category) {
     filters[CATEGORY_COL] = category;
@@ -168,13 +192,13 @@ function onChangeCategory(e) {
     delete filters[CATEGORY_COL];
   }
 
-  updateTable("#table", dataset, filters);
+  updateTable('#table', dataset, filters);
   drawMap(category);
 }
 
 // Update table and map when country changes
 function onChangeCountry(e) {
-  const country = e.target.getAttribute("value");
+  const country = e.target.getAttribute('value');
 
   if (country) {
     filters[COUNTRY_COL] = country;
@@ -182,45 +206,41 @@ function onChangeCountry(e) {
     delete filters[COUNTRY_COL];
   }
 
-  updateTable("#table", dataset, filters);
+  updateTable('#table', dataset, filters);
   updateMapFromDropdown(country);
 }
 
 // Update dropdown selection when user selects a country on map
 function updateDropdownFromMap(country) {
-  const countryDropdownName = getKeyByValue(countryTopojsonNames, country) || country;
-  
-  let path = document.querySelector(".active")
-  if (path) {
-    if(path.children[0].innerHTML === country) {
-      //this code runs when zooming out 
-      //TODO set the value of country dropdown to "Set a country..." and clear the table
-    }
-  }
+  const countryDropdownName =
+    getKeyByValue(countryTopojsonNames, country) || country;
 
   let selectedTextToAppend = document.createTextNode(countryDropdownName);
   countryDropdownSelected.innerHTML = null;
-  countryDropdownSelected.setAttribute("value", countryDropdownName);
+  countryDropdownSelected.setAttribute('value', countryDropdownName);
   countryDropdownSelected.appendChild(selectedTextToAppend);
 
   filters[COUNTRY_COL] = countryDropdownName;
-  updateTable("#table", dataset, filters);
+  updateTable('#table', dataset, filters);
 }
 
 // Update map selection when user selects a country from dropdown
 function updateMapFromDropdown(country) {
+  let path;
   if (country) {
-    const countrySVGName = getCountryTopojsonName(country).replace(/ /g, "_");
-    let path = document.querySelector(".unit.unit-" + countrySVGName);
+    const countrySVGName = getCountryTopojsonName(country).replace(/ /g, '_');
+    path = document.querySelector('.unit.unit-' + countrySVGName);
+
     if (path) {
-      path.dispatchEvent(new Event("click"));
+      path.dispatchEvent(new Event('click'));
     }
   } else {
-    let path = document.querySelector(".active")
+    path = document.querySelector('.active');
+
     if (path) {
-      path.dispatchEvent(new Event("click"))
-      delete filters[COUNTRY_COL]
-      updateTable("#table", dataset, filters);
+      path.dispatchEvent(new Event('click'));
+      delete filters[COUNTRY_COL];
+      updateTable('#table', dataset, filters);
     }
   }
 }
@@ -228,50 +248,53 @@ function updateMapFromDropdown(country) {
 // ============================ TABLE ============================
 
 const noResultsText = document.querySelector('.no-results-text');
+const instructionsText = document.querySelector('.instructions-text');
 
 // Creates table
 function createTable(selector, data) {
-  let table = d3.select(selector)
-    .append("table")
-    .classed("my-table", true)
+  let table = d3.select(selector).append('table').classed('my-table', true);
 
   // Columns to display
-  let tableHeaders = [COUNTRY_COL, CATEGORY_COL, "Thematic Area"];
+  let tableHeaders = [COUNTRY_COL, CATEGORY_COL, 'Thematic Area'];
 
   let header = table
-    .append("thead")
-    .append("tr")
-    .selectAll("th")
+    .append('thead')
+    .append('tr')
+    .selectAll('th')
     .data(tableHeaders)
     .enter()
-    .append("th")
-    .text(d => { return d; })
+    .append('th')
+    .text((d) => {
+      return d;
+    });
 
   let rows = table
-    .append("tbody")
-    .selectAll("tr")
+    .append('tbody')
+    .selectAll('tr')
     .data(data)
     .enter()
-    .append("tr")
-    .on("click", populateModalWithData);
+    .append('tr')
+    .on('click', populateModalWithData);
 
   let cells = rows
-    .selectAll("td")
-    .data(row => {
+    .selectAll('td')
+    .data((row) => {
       return tableHeaders.map((d, i) => {
         return { i: d, value: row[d] };
       });
     })
     .enter()
-    .append("td")
-    .html(d => { return d.value; }); 
-    updateTable("#table", dataset, filters);
+    .append('td')
+    .html((d) => {
+      return d.value;
+    });
+  updateTable('#table', dataset, filters);
 }
 
 // Updates table with filters
 function updateTable(selector, data, filters = {}) {
   let table = d3.select(selector);
-  let tableHeaders = [COUNTRY_COL, CATEGORY_COL, "Thematic Area"];
+  let tableHeaders = [COUNTRY_COL, CATEGORY_COL, 'Thematic Area'];
 
   // Remove existing rows
   table.select('tbody').selectAll('tr').remove();
@@ -285,36 +308,44 @@ function updateTable(selector, data, filters = {}) {
     }
 
     return true;
-  }
+  };
 
   // Update rows
-  let rows = table.select('tbody')
-    .selectAll("tr")
+  let rows = table
+    .select('tbody')
+    .selectAll('tr')
     .data(data.filter(shouldDisplayRow))
     .enter()
-    .append("tr")
-    .on("click", populateModalWithData);
-
+    .append('tr')
+    .on('click', populateModalWithData);
 
   // Hide table if no rows to display
-  if (rows.size() == 0 || Object.entries(filters).length === 0) {
-    table.style("display", "none");
-    noResultsText.style.display = "block";
+  if (rows.size() == 0) {
+    table.style('display', 'none');
+    noResultsText.style.display = 'block';
+    instructionsText.style.display = 'none';
+  } else if (Object.entries(filters).length === 0) {
+    table.style('display', 'none');
+    noResultsText.style.display = 'none';
+    instructionsText.style.display = 'block';
   } else {
-    table.style("display", "block");
-    noResultsText.style.display = "none";
+    table.style('display', 'block');
+    noResultsText.style.display = 'none';
+    instructionsText.style.display = 'none';
   }
 
   let cells = rows
-    .selectAll("td")
-    .data(row => {
+    .selectAll('td')
+    .data((row) => {
       return tableHeaders.map((d, i) => {
         return { i: d, value: row[d] };
       });
     })
     .enter()
-    .append("td")
-    .html(d => { return d.value; });
+    .append('td')
+    .html((d) => {
+      return d.value;
+    });
 }
 
 // ============================ MODAL ============================
@@ -324,20 +355,22 @@ const closeModalBtn = document.querySelector('.modal__close-btn');
 
 // Close modal when user clicks close button
 closeModalBtn.onclick = () => {
-  modal.style.display = "none";
-}
+  modal.style.display = 'none';
+};
 
 // Close modal when user clicks outside of it
 window.onclick = (event) => {
   if (event.target == modal) {
-    modal.style.display = "none";
+    modal.style.display = 'none';
   }
 };
 
 function populateModalWithData(d) {
-  modal.style.display = "block";
+  modal.style.display = 'block';
   document.getElementById('modal-country').innerHTML = d[COUNTRY_COL];
-  document.getElementById('modal-category').innerHTML = getCategoryDisplayName(d[CATEGORY_COL]);
+  document.getElementById('modal-category').innerHTML = getCategoryDisplayName(
+    d[CATEGORY_COL]
+  );
   document.getElementById('modal-thematic-area').innerHTML = d['Thematic Area'];
   document.getElementById('modal-content-area').innerHTML = d['Content Area'];
   document.getElementById('modal-result-type').innerHTML = d['Result Type'];
@@ -369,12 +402,16 @@ function getDataForCategory(data, category, getDisplayText) {
     return [];
   }
 
-  let entriesForCategory = data.filter(entry => entry[CATEGORY_COL].toLowerCase() == category.toLowerCase());
+  let entriesForCategory = data.filter(
+    (entry) => entry[CATEGORY_COL].toLowerCase() == category.toLowerCase()
+  );
 
   // Array of objects that look like this:
   // {name: "Bangladesh", Thematic Area Category: "Sexual reproductive health", Initiative Count: 13}
   let countryCategoryCount = entriesForCategory.reduce((result, entry) => {
-    const country = getDisplayText ? getDisplayText(entry[COUNTRY_COL]) : entry[COUNTRY_COL];
+    const country = getDisplayText
+      ? getDisplayText(entry[COUNTRY_COL])
+      : entry[COUNTRY_COL];
 
     // Add to count if country has aleady been seen
     for (let i = 0; i < result.length; i++) {
@@ -384,7 +421,7 @@ function getDataForCategory(data, category, getDisplayText) {
       }
     }
     // Push new object to array if country hasn't been seen yet
-    result.push({ 'name': country, 'Initiative Count': 1 });
+    result.push({ name: country, 'Initiative Count': 1 });
     return result;
   }, []);
 
@@ -393,5 +430,5 @@ function getDataForCategory(data, category, getDisplayText) {
 
 // Get key from object given a value
 function getKeyByValue(object, value) {
-  return Object.keys(object).find(key => object[key] === value);
+  return Object.keys(object).find((key) => object[key] === value);
 }

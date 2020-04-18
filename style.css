@@ -2,10 +2,10 @@
 
 body {
   padding: 0 10px;
-  font: 18px/1.5 -apple-system, BlinkMacSystemFont, "avenir next", avenir,
-    "Segoe UI", "lucida grande", "helvetica neue", helvetica, "Fira Sans",
-    roboto, noto, "Droid Sans", cantarell, oxygen, ubuntu,
-    "franklin gothic medium", "century gothic", "Liberation Sans", sans-serif;
+  font: 18px/1.5 -apple-system, BlinkMacSystemFont, 'avenir next', avenir,
+    'Segoe UI', 'lucida grande', 'helvetica neue', helvetica, 'Fira Sans',
+    roboto, noto, 'Droid Sans', cantarell, oxygen, ubuntu,
+    'franklin gothic medium', 'century gothic', 'Liberation Sans', sans-serif;
 }
 
 h1,
@@ -26,7 +26,7 @@ img {
 /* VISUALIZATION */
 
 .vis-holder {
-  font-family: "Libre Franklin", Arial, Helvetica, sans-serif;
+  font-family: 'Libre Franklin', Arial, Helvetica, sans-serif;
   height: 100%;
   background-color: #f4f4f4;
   padding: 20px 10px 50px 10px;
@@ -148,7 +148,8 @@ img {
 }
 
 /* TABLE */
-.no-results-text {
+.no-results-text,
+.instructions-text {
   display: none;
 }
 
@@ -187,7 +188,7 @@ td {
 /* MODAL */
 
 .modal {
-  font-family: "Libre Franklin", Arial, Helvetica, sans-serif;
+  font-family: 'Libre Franklin', Arial, Helvetica, sans-serif;
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 100; /* Sit on top */
@@ -287,7 +288,7 @@ td {
 }
 #forkongithub a::before,
 #forkongithub a::after {
-  content: "";
+  content: '';
   width: 100%;
   display: block;
   position: absolute;
@@ -324,4 +325,3 @@ td {
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
   }
 }
-
