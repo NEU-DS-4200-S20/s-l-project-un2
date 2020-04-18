@@ -91,8 +91,8 @@ function drawMap(category = "") {
 
 // Zooms into map
 function zoomMap(d) {
-  // Tell dispatch that map changed
-  dispatch.call("map-changed", {}, d.properties.name)
+  //Update the dropdown in response to the map
+  updateDropdownFromMap(d.properties.name)
 
   // Original zooming implementation from d3-geomap libary 
   let k = 1,
@@ -131,10 +131,6 @@ const categoryDropdown = document.querySelector('#category-dropdown .dropdown__l
 const categoryDropdownSelected = document.querySelector(
   "#category-dropdown .dropdown__selected"
 );
-
-// Link dropdowns to map
-let dispatch = d3.dispatch("map-changed");
-dispatch.on("map-changed", updateDropdownFromMap);
 
 // Populates given dropdown with given option values
 function populateDropdown(dropdown, options, onOptionClick, getDisplayText) {
@@ -193,6 +189,14 @@ function onChangeCountry(e) {
 // Update dropdown selection when user selects a country on map
 function updateDropdownFromMap(country) {
   const countryDropdownName = getKeyByValue(countryTopojsonNames, country) || country;
+  
+  let path = document.querySelector(".active")
+  if (path) {
+    if(path.children[0].innerHTML === country) {
+      //this code runs when zooming out 
+      //TODO set the value of country dropdown to "Set a country..." and clear the table
+    }
+  }
 
   let selectedTextToAppend = document.createTextNode(countryDropdownName);
   countryDropdownSelected.innerHTML = null;
@@ -212,7 +216,12 @@ function updateMapFromDropdown(country) {
       path.dispatchEvent(new Event("click"));
     }
   } else {
-    // TODO: Zoom out of map somehow
+    let path = document.querySelector(".active")
+    if (path) {
+      path.dispatchEvent(new Event("click"))
+      delete filters[COUNTRY_COL]
+      updateTable("#table", dataset, filters);
+    }
   }
 }
 
@@ -255,7 +264,8 @@ function createTable(selector, data) {
     })
     .enter()
     .append("td")
-    .html(d => { return d.value; });
+    .html(d => { return d.value; }); 
+    updateTable("#table", dataset, filters);
 }
 
 // Updates table with filters
@@ -287,7 +297,7 @@ function updateTable(selector, data, filters = {}) {
 
 
   // Hide table if no rows to display
-  if (rows.size() == 0) {
+  if (rows.size() == 0 || Object.entries(filters).length === 0) {
     table.style("display", "none");
     noResultsText.style.display = "block";
   } else {
