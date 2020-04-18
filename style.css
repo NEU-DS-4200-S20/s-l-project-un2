@@ -18,6 +18,10 @@ img {
   width: 100%;
 }
 
+a:visited {
+  color: blue;
+}
+
 .content-column {
   max-width: 650px;
   margin: 40px auto;
