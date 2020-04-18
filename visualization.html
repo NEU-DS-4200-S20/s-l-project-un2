@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Metadata -->
+  <head>
+    <meta charset="utf-8" />
+
+    <!-- Title -->
+    <title>UN2: UNFPA Global Learning Map, DS 4200 S20</title>
+
+    <!-- CSS Styling -->
+    <link rel="stylesheet" href="style.css" />
+    <link href="lib/d3-geomap/d3-geomap.css" rel="stylesheet" />
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicons -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="favicons/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="favicons/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="favicons/favicon-16x16.png"
+    />
+    <link rel="manifest" href="favicons/site.webmanifest" />
+    <link rel="shortcut icon" href="favicons/favicon.ico" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="msapplication-config" content="favicons/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
+  </head>
+
+  <!-- Main page content -->
+  <body class="vis-holder">
+    <h2 class="vis__title">UNFPA Global Learning Map</h2>
+    <div class="vis__dual-panel">
+      <div class="d3-geomap vis__left-panel">
+        <div id="map"></div>
+      </div>
+
+      <div class="vis__right-panel">
+        <!--Category dropdown-->
+        <label for="category-dropdown" class="dropdown-label">Category</label>
+        <ul id="category-dropdown" class="dropdown">
+          <li
+            role="button"
+            aria-labelledby="dropdown-label"
+            class="dropdown__selected"
+            tabindex="0"
+          >
+            Select a category...
+          </li>
+
+          <svg
+            class="dropdown__arrow"
+            width="10"
+            height="5"
+            viewBox="0 0 10 5"
+            fill-rule="evenodd"
+          >
+            <title>Open dropdown</title>
+            <path d="M10 0L5 5 0 0z"></path>
+          </svg>
+
+          <li
+            aria-expanded="false"
+            role="list"
+            class="dropdown__list-container"
+          >
+            <ul class="dropdown__list">
+              <li class="dropdown__list-item">
+                Select a category...
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <!--Country dropdown-->
+        <label for="country-dropdown" class="dropdown-label">Country</label>
+        <ul id="country-dropdown" class="dropdown">
+          <li
+            role="button"
+            aria-labelledby="dropdown-label"
+            class="dropdown__selected"
+            tabindex="0"
+          >
+            Select a country...
+          </li>
+
+          <svg
+            class="dropdown__arrow"
+            width="10"
+            height="5"
+            viewBox="0 0 10 5"
+            fill-rule="evenodd"
+          >
+            <title>Open dropdown</title>
+            <path d="M10 0L5 5 0 0z"></path>
+          </svg>
+
+          <li
+            aria-expanded="false"
+            role="list"
+            class="dropdown__list-container"
+          >
+            <ul class="dropdown__list">
+              <li class="dropdown__list-item">
+                Select a country...
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <p class="no-results-text">No results found.</p>
+        <div class="instructions-text">
+          <p>
+            Welcome to the <strong>UNFPA Learning Map</strong>, where you can
+            explore our Country Programme Results by thematic category or by
+            country.
+          </p>
+          <p>Select a country or category to get started!</p>
+        </div>
+
+        <!--Table-->
+        <div class="table-holder" id="table"></div>
+      </div>
+    </div>
+
+    <!--Initiative Detail Modal-->
+    <div id="initiative-modal" class="modal">
+      <div class="modal__content">
+        <div class="modal-header">
+          <p class="modal-label">Initiative Details</p>
+          <button
+            class="modal__close-btn"
+            aria-label="Close intiative details modal"
+          >
+            &times;
+          </button>
+        </div>
+        <div id="modal-body">
+          <h3 id="modal-country" class="modal-body__title">Country</h3>
+          <h4 id="modal-category" class="modal-body__subtitle">Category</h4>
+          <div class="modal-body__row">
+            <div class="modal-body__row-item">
+              <p class="modal-body__label">Thematic Area</p>
+              <p id="modal-thematic-area">Thematic Area</p>
+            </div>
+
+            <div class="modal-body__row-item">
+              <p class="modal-body__label">Content Area</p>
+              <p id="modal-content-area">Content Area</p>
+            </div>
+            <div class="modal-body__row-item">
+              <p class="modal-body__label">Result Type</p>
+              <p id="modal-result-type">Result Type</p>
+            </div>
+          </div>
+          <p class="modal-body__label">Narrative</p>
+          <p id="modal-narrative">Narrative</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts at the end avoid need for dealing with async, defer, or onload event handlers -->
+    <script src="https://unpkg.com/d3@5/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/topojson@3/dist/topojson.min.js"></script>
+    <script src="lib/d3-geomap/d3-geomap.min.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script src="js/visualization.js"></script>
+  </body>
+</html>
